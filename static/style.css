@@ -16,9 +16,47 @@ body {
 
 h1 {
   color: #1D3557;
+  margin-bottom: 1.25rem;
 }
 
 p {
   color: #444;
   line-height: 1.6;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+label {
+  font-weight: bold;
+  color: #1D3557;
+}
+
+input, select {
+  padding: .625rem;
+  border: 1px solid #CCD5E0;
+  border-radius: .5rem;
+}
+
+button {
+  margin-top: .625rem;
+  padding: .75rem;
+  background-color: #1D3557;
+  color: white;
+  border: none;
+  border-radius: .5rem;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+a {
+  color: #1D3557;
+  text-decoration: none;
+  font-weight: bold;
 }
