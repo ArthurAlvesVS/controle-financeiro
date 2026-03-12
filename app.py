@@ -11,20 +11,44 @@ db.init_app(app)
 
 @app.route("/")
 def home():
-  transactions = Transaction.query.all()
+    month = request.args.get("month")
+    year = request.args.get("year")
 
-  total_receitas = sum(t.amount for t in transactions if t.type == "receita")
-  total_despesas = sum(t.amount for t in transactions if t.type == "despesa")
+    transactions = Transaction.query.all()
 
-  saldo = total_receitas - total_despesas
+    if month and year:
+       transactions = [
+          t for t in transactions
+          if t.date.statswith(f"{year}-{month}")
+       ]
 
-  return render_template(
-     "index.html", 
-     transactions=transactions,
-     total_receitas=total_receitas,
-     total_despesas=total_despesas,
-     saldo=saldo
-     )
+    total_receitas = sum(t.amount for t in transactions if t.type == "receita")
+    total_despesas = sum(t.amount for t in transactions if t.type == "despesa")
+    saldo = total_receitas - total_despesas
+
+    despesas_por_categoria = {}
+
+    for t in transactions:
+         if t.type == "despesa":
+            if t.category in despesas_por_categoria:
+             despesas_por_categoria[t.category] += t.amount
+            else:
+               despesas_por_categoria[t.category] = t.amount
+        
+    categorias = list(despesas_por_categoria.keys())
+    valores = list(despesas_por_categoria.values())
+    
+    return render_template(
+         "index.html", 
+         transactions=transactions,
+         total_receitas=total_receitas,
+         total_despesas=total_despesas,
+         saldo=saldo,
+         categorias=categorias,
+         valores=valores,
+         selected_month=month,
+         selected_year=year
+      )
 
 @app.route("/add", methods=["GET", "POST"])
 def add_transaction():
@@ -33,12 +57,14 @@ def add_transaction():
       amount = float(request.form["amount"])
       category = request.form["category"]
       transaction_type = request.form["type"]
+      date = request.form["date"]
 
       new_transaction = Transaction(
          description=description,
          amount=amount,
          category=category,
-         type=transaction_type
+         type=transaction_type,
+         date=date
       )
 
       db.session.add(new_transaction)
@@ -66,6 +92,7 @@ def edit_transaction(id):
         transaction.amount = float(request.form["amount"])
         transaction.category = request.form["category"]
         transaction.type = request.form["type"]
+        transaction.date = request.form["date"]
 
         db.session.commit()
 

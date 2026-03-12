@@ -26,6 +26,7 @@
             <th>Valor</th>
             <th>Categoria</th>
             <th>Tipo</th>
+            <th>Data</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -36,12 +37,13 @@
                 <td>R$ {{ "%.2f"|format(transaction.amount) }}</td>
                 <td>{{ transaction.category }}</td>
                 <td>{{ transaction.type.capitalize() }}</td>
+                <td>{{ transaction.date }}</td>
                 <td>
                   <a href="{{ url_for('edit_transaction', id=transaction.id) }}" class="edit-btn">
-                   Editar
+                  Editar
                   </a>                
                   <a href="{{ url_for('delete_transaction', id=transaction.id) }}" class="delete-btn">
-                    Excluir
+                  Excluir
                   </a>
                 </td>
               </tr>
@@ -51,6 +53,32 @@
     {% else %}
             <p>Nenhuma transação cadastrada ainda.</p>
     {% endif %}
+
+    <h2>Filtrar por Mês</h2>
+
+    <form method="get" class="filter-form" >
+      <label for="month">Mês:</label>
+      <select name="month" id="month">
+        <option value="">Todos</option>
+        <option value="01" {% if selected_month == "01" %}selected{% endif %}>Janeiro</option>
+        <option value="02" {% if selected_month == "02" %}selected{% endif %}>Fevereiro</option>
+        <option value="03" {% if selected_month == "03" %}selected{% endif %}>Março</option>
+        <option value="04" {% if selected_month == "04" %}selected{% endif %}>Abril</option>
+        <option value="05" {% if selected_month == "05" %}selected{% endif %}>Maio</option>
+        <option value="06" {% if selected_month == "06" %}selected{% endif %}>Junho</option>
+        <option value="07" {% if selected_month == "07" %}selected{% endif %}>Julho</option>
+        <option value="08" {% if selected_month == "08" %}selected{% endif %}>Agosto</option>
+        <option value="09" {% if selected_month == "09" %}selected{% endif %}>Setembro</option>
+        <option value="10" {% if selected_month == "10" %}selected{% endif %}>Outubro</option>
+        <option value="11" {% if selected_month == "11" %}selected{% endif %}>Novembro</option>
+        <option value="12" {% if selected_month == "12" %}selected{% endif %}>Dezembro</option>
+      </select>
+
+      <label for="year">Ano:</label>
+      <input type="text" name="year" id="year" value="{{ selected_year or '' }}" placeholder="2026">
+
+      <button type="submit" class="filter">Filtrar</button>
+    </form>
 
     <h2>Resumo Financeiro</h2>
 
@@ -77,6 +105,16 @@
     <div class="chart-container">
       <canvas id="financeChart"></canvas>
     </div>
+
+    <h2>Despesas por Categoria</h2>
+    <div
+    id="category-data" 
+    data-categorias='{{ categorias | tojson }}'
+    data-valores='{{ valores | tojson }}''>
+    </div>
+<div class="chart-container">
+  <canvas id="categoryChart"></canvas>
+</div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -101,6 +139,37 @@ new Chart(ctx, {
         responsive: true
     }
 });
+</script>
+
+<script>
+  const categoryData = document.getElementById("category-data");
+
+  const categorias = JSON.parse(categoryData.dataset.categorias); 
+  const valores = JSON.parse(categoryData.dataset.valores);
+
+  const ctx2 = document.getElementById('categoryChart');
+
+  new Chart(ctx2, {
+    type: 'pie',
+    data: {
+      labels: categorias,
+      datasets: [{
+        label: 'Despesas por Categoria',
+        data: valores,
+        backgroundColor: [
+          '#E63946',
+          '#F4A261',
+          '#2A9D8F',
+          '#457B9D',
+          '#E9C46A',
+          '#8D99AE'
+        ]
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  })
 </script>
 </body>
 </html>
