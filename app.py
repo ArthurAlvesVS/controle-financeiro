@@ -12,7 +12,19 @@ db.init_app(app)
 @app.route("/")
 def home():
   transactions = Transaction.query.all()
-  return render_template("index.html", transactions=transactions)
+
+  total_receitas = sum(t.amount for t in transactions if t.type == "receita")
+  total_despesas = sum(t.amount for t in transactions if t.type == "despesa")
+
+  saldo = total_receitas - total_despesas
+
+  return render_template(
+     "index.html", 
+     transactions=transactions,
+     total_receitas=total_receitas,
+     total_despesas=total_despesas,
+     saldo=saldo
+     )
 
 @app.route("/add", methods=["GET", "POST"])
 def add_transaction():

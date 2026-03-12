@@ -86,3 +86,38 @@ h2 {
   margin-top: 1.875rem;
   color: #1D3557;
 }
+
+.summary {
+  display: flex;
+  gap: 20px;
+  margin-top: 1.25rem;
+}
+
+.card {
+  flex: 1;
+  padding: 1.25rem;
+  border-radius: .625rem;
+  color: white;
+}
+
+.receita {
+  background-color: #2A9D8F;
+}
+
+.despesa {
+  background-color: #E63946;
+}
+
+.saldo {
+  background-color: #457B9D;
+}
+
+.card h3 {
+  margin: 0;
+}
+
+.card p {
+  font-size: 1.375rem;
+  margin-top: .625rem;
+  color: white;
+}
