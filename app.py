@@ -48,6 +48,31 @@ def add_transaction():
    
    return render_template("add_transaction.html")
 
+@app.route("/delete/<int:id>")
+def delete_transaction(id):
+   transaction = Transaction.query.get_or_404(id)
+
+   db.session.delete(transaction)
+   db.session.commit()
+
+   return redirect(url_for("home"))
+
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit_transaction(id):
+    transaction = Transaction.query.get_or_404(id)
+
+    if request.method == "POST":
+        transaction.description = request.form["description"]
+        transaction.amount = float(request.form["amount"])
+        transaction.category = request.form["category"]
+        transaction.type = request.form["type"]
+
+        db.session.commit()
+
+        return redirect(url_for("home"))
+
+    return render_template("edit_transaction.html", transaction=transaction)
+
 if __name__ == "__main__":
   with app.app_context():
       db.create_all()

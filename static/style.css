@@ -55,6 +55,26 @@ button:hover {
   opacity: 0.9;
 }
 
+p > a {
+  display: block;
+  text-align: center;
+  justify-self: center;
+  margin-top: 40px;
+  padding: 5px 5px;
+  max-width: 30%;
+  
+  border: 2px solid #00a0ea;
+  border-radius: 10px;
+
+}
+
+p > a:hover {
+  color: white;
+  border: 2px solid transparent;
+  outline: 1px solid #02547a;
+  background-color: #02547a;
+}
+
 a {
   color: #1D3557;
   text-decoration: none;
@@ -83,7 +103,7 @@ tr:nth-child(even) {
 }
 
 h2 {
-  margin-top: 1.875rem;
+  margin-top: 1.5625rem;
   color: #1D3557;
 }
 
@@ -120,4 +140,34 @@ h2 {
   font-size: 1.375rem;
   margin-top: .625rem;
   color: white;
+}
+
+.delete-btn {
+  border: 2px solid transparent;
+  outline: 1px solid #E63946;
+  color: #E63946;
+  padding: 4px 5px;
+  border-radius: .375rem;
+  text-decoration: none;
+  font-size: .875rem;
+}
+
+.delete-btn:hover {
+  background-color: #f399a1;
+  color: white;
+  opacity: 0.85;
+}
+
+.edit-btn {
+    background-color: #457b9d;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: .875px;
+    margin-right: 8px;
+}
+
+.edit-btn:hover {
+    opacity: 0.85;
 }
