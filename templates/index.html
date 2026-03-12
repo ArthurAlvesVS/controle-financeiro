@@ -1,175 +1,171 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle Financeiro</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-  <div class="container">
+{% extends "base.html" %}
+
+{% block title %}Controle Financeiro Pessoal{% endblock %}
+
+{% block content %}
     <h1>Controle Financeiro Pessoal</h1>
-    <h3>Bem-Vindo ao seu sistema de finanças!</h3>
+    <p>Bem-vindo ao seu sistema de finanças.</p>
     <p>Aqui você poderá registrar entradas e saídas de dinheiro.</p>
 
     <p>
-      <a href="{{ url_for('add_transaction') }}"> Adicionar Nova Transação</a>
+        <a href="{{ url_for('add_transaction') }}">Adicionar nova transação</a>
     </p>
-
-    <h2>Histórico de Transações</h2>
-
-    {% if transactions %}
-       <table>
-        <thead>
-          <tr>
-            <th>Descrição</th>
-            <th>Valor</th>
-            <th>Categoria</th>
-            <th>Tipo</th>
-            <th>Data</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for transaction in transactions %}
-              <tr>
-                <td>{{ transaction.description }}</td>
-                <td>R$ {{ "%.2f"|format(transaction.amount) }}</td>
-                <td>{{ transaction.category }}</td>
-                <td>{{ transaction.type.capitalize() }}</td>
-                <td>{{ transaction.date }}</td>
-                <td>
-                  <a href="{{ url_for('edit_transaction', id=transaction.id) }}" class="edit-btn">
-                  Editar
-                  </a>                
-                  <a href="{{ url_for('delete_transaction', id=transaction.id) }}" class="delete-btn">
-                  Excluir
-                  </a>
-                </td>
-              </tr>
-          {% endfor %}
-        </tbody>
-       </table>
-    {% else %}
-            <p>Nenhuma transação cadastrada ainda.</p>
-    {% endif %}
 
     <h2>Filtrar por Mês</h2>
 
-    <form method="get" class="filter-form" >
-      <label for="month">Mês:</label>
-      <select name="month" id="month">
-        <option value="">Todos</option>
-        <option value="01" {% if selected_month == "01" %}selected{% endif %}>Janeiro</option>
-        <option value="02" {% if selected_month == "02" %}selected{% endif %}>Fevereiro</option>
-        <option value="03" {% if selected_month == "03" %}selected{% endif %}>Março</option>
-        <option value="04" {% if selected_month == "04" %}selected{% endif %}>Abril</option>
-        <option value="05" {% if selected_month == "05" %}selected{% endif %}>Maio</option>
-        <option value="06" {% if selected_month == "06" %}selected{% endif %}>Junho</option>
-        <option value="07" {% if selected_month == "07" %}selected{% endif %}>Julho</option>
-        <option value="08" {% if selected_month == "08" %}selected{% endif %}>Agosto</option>
-        <option value="09" {% if selected_month == "09" %}selected{% endif %}>Setembro</option>
-        <option value="10" {% if selected_month == "10" %}selected{% endif %}>Outubro</option>
-        <option value="11" {% if selected_month == "11" %}selected{% endif %}>Novembro</option>
-        <option value="12" {% if selected_month == "12" %}selected{% endif %}>Dezembro</option>
-      </select>
+    <form method="GET" class="filter-form">
+        <label for="month">Mês:</label>
+        <select name="month" id="month">
+            <option value="">Todos</option>
+            <option value="01" {% if selected_month == "01" %}selected{% endif %}>Janeiro</option>
+            <option value="02" {% if selected_month == "02" %}selected{% endif %}>Fevereiro</option>
+            <option value="03" {% if selected_month == "03" %}selected{% endif %}>Março</option>
+            <option value="04" {% if selected_month == "04" %}selected{% endif %}>Abril</option>
+            <option value="05" {% if selected_month == "05" %}selected{% endif %}>Maio</option>
+            <option value="06" {% if selected_month == "06" %}selected{% endif %}>Junho</option>
+            <option value="07" {% if selected_month == "07" %}selected{% endif %}>Julho</option>
+            <option value="08" {% if selected_month == "08" %}selected{% endif %}>Agosto</option>
+            <option value="09" {% if selected_month == "09" %}selected{% endif %}>Setembro</option>
+            <option value="10" {% if selected_month == "10" %}selected{% endif %}>Outubro</option>
+            <option value="11" {% if selected_month == "11" %}selected{% endif %}>Novembro</option>
+            <option value="12" {% if selected_month == "12" %}selected{% endif %}>Dezembro</option>
+        </select>
 
-      <label for="year">Ano:</label>
-      <input type="text" name="year" id="year" value="{{ selected_year or '' }}" placeholder="2026">
+        <label for="year">Ano:</label>
+        <input type="text" name="year" id="year" value="{{ selected_year or '' }}" placeholder="2026">
 
-      <button type="submit" class="filter">Filtrar</button>
+        <button type="submit">Filtrar</button>
     </form>
 
     <h2>Resumo Financeiro</h2>
 
     <div class="summary">
-      <div class="card receita">
-        <h3>Receitas</h3>
-        <p>R$ {{ "%.2f"|format(total_receitas) }}</p>
-      </div>
+        <div class="card receita">
+            <h3>Receitas</h3>
+            <p>R$ {{ "%.2f"|format(total_receitas) }}</p>
+        </div>
 
-      <div class="card despesa">
-        <h3>Despesas</h3>
-        <p>R$ {{ "%.2f"|format(total_despesas) }}</p>
-      </div>
+        <div class="card despesa">
+            <h3>Despesas</h3>
+            <p>R$ {{ "%.2f"|format(total_despesas) }}</p>
+        </div>
 
-      <div class="card saldo">
-        <h3>Saldo</h3>
-        <p>R$ {{ "%.2f"|format(saldo) }}</p>
-      </div>
-
+        <div class="card saldo">
+            <h3>Saldo</h3>
+            <p>R$ {{ "%.2f"|format(saldo) }}</p>
+        </div>
     </div>
+
+    <h2>Histórico de Transações</h2>
+
+    {% if transactions %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Categoria</th>
+                    <th>Tipo</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.description }}</td>
+                        <td>R$ {{ "%.2f"|format(transaction.amount) }}</td>
+                        <td>{{ transaction.category }}</td>
+                        <td>{{ transaction.type.capitalize() }}</td>
+                        <td>{{ transaction.date }}</td>
+                        <td class="actions">
+                            <a href="{{ url_for('edit_transaction', id=transaction.id) }}" class="edit-btn">Editar</a>
+                            <a href="{{ url_for('delete_transaction', id=transaction.id) }}" class="delete-btn">Excluir</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Nenhuma transação cadastrada ainda.</p>
+    {% endif %}
+
     <h2>Visão Financeira</h2>
-    <div id="finance-data" data-receitas="{{ total_receitas }}" data-despesas="{{ total_despesas }}">
-    </div>
+
+    <div 
+        id="finance-data"
+        data-receitas="{{ total_receitas }}"
+        data-despesas="{{ total_despesas }}"
+    ></div>
+
     <div class="chart-container">
-      <canvas id="financeChart"></canvas>
+        <canvas id="financeChart"></canvas>
     </div>
 
     <h2>Despesas por Categoria</h2>
-    <div
-    id="category-data" 
-    data-categorias='{{ categorias | tojson }}'
-    data-valores='{{ valores | tojson }}''>
+
+    <div 
+        id="category-data"
+        data-categorias='{{ categorias | tojson }}'
+        data-valores='{{ valores | tojson }}'
+    ></div>
+
+    <div class="chart-container">
+        <canvas id="categoryChart"></canvas>
     </div>
-<div class="chart-container">
-  <canvas id="categoryChart"></canvas>
-</div>
-  </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
 
-<script>
-const financeData = document.getElementById("finance-data");
-const receitas = Number(financeData.dataset.receitas);
-const despesas = Number(financeData.dataset.despesas);
+{% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-const ctx = document.getElementById("financeChart");
+    <script>
+        const financeData = document.getElementById("finance-data");
+        const receitas = Number(financeData.dataset.receitas);
+        const despesas = Number(financeData.dataset.despesas);
 
-new Chart(ctx, {
-    type: "doughnut",
-    data: {
-        labels: ["Receitas", "Despesas"],
-        datasets: [{
-            label: "Resumo Financeiro",
-            data: [receitas, despesas],
-            backgroundColor: ["#2a9d8f", "#e63946"]
-        }]
-    },
-    options: {
-        responsive: true
-    }
-});
-</script>
+        const ctx = document.getElementById("financeChart");
 
-<script>
-  const categoryData = document.getElementById("category-data");
+        new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: ["Receitas", "Despesas"],
+                datasets: [{
+                    label: "Resumo Financeiro",
+                    data: [receitas, despesas],
+                    backgroundColor: ["#2a9d8f", "#e63946"]
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
 
-  const categorias = JSON.parse(categoryData.dataset.categorias); 
-  const valores = JSON.parse(categoryData.dataset.valores);
+        const categoryData = document.getElementById("category-data");
+        const categorias = JSON.parse(categoryData.dataset.categorias);
+        const valores = JSON.parse(categoryData.dataset.valores);
 
-  const ctx2 = document.getElementById('categoryChart');
+        const ctx2 = document.getElementById("categoryChart");
 
-  new Chart(ctx2, {
-    type: 'pie',
-    data: {
-      labels: categorias,
-      datasets: [{
-        label: 'Despesas por Categoria',
-        data: valores,
-        backgroundColor: [
-          '#E63946',
-          '#F4A261',
-          '#2A9D8F',
-          '#457B9D',
-          '#E9C46A',
-          '#8D99AE'
-        ]
-      }]
-    },
-    options: {
-      responsive: true
-    }
-  })
-</script>
-</body>
-</html>
+        new Chart(ctx2, {
+            type: "pie",
+            data: {
+                labels: categorias,
+                datasets: [{
+                    label: "Despesas por Categoria",
+                    data: valores,
+                    backgroundColor: [
+                        "#e63946",
+                        "#f4a261",
+                        "#2a9d8f",
+                        "#457b9d",
+                        "#e9c46a",
+                        "#8d99ae"
+                    ]
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+{% endblock %}
