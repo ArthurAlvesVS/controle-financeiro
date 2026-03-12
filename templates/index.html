@@ -12,7 +12,36 @@
     <p>Bem-Vindo ao seu sistema de finanças!</p>
     <p>Aqui você poderá registrar entradas e saídas de dinheiro.</p>
 
-    <p><a href="{{ url_for('add_transaction') }}">Adicionar nova transação</a></p>
+    <p>
+      <a href="{{ url_for('add_transaction') }}">Adicionar nova transação</a>
+    </p>
+
+    <h2>Histórico de Transações</h2>
+
+    {% if transactions %}
+       <table>
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Categoria</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for transaction in transactions %}
+              <tr>
+                <td>{{ transaction.description }}</td>
+                <td>R$ {{ "%.2f"|format(transaction.amount) }}</td>
+                <td>{{ transaction.category }}</td>
+                <td>{{ transaction.type }}</td>
+              </tr>
+          {% endfor %}
+        </tbody>
+       </table>
+    {% else %}
+            <p>Nenhuma transação cadastrada ainda.</p>
+    {% endif %}
   </div>
 </body>
 </html>

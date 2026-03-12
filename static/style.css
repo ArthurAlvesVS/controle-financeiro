@@ -60,3 +60,29 @@ a {
   text-decoration: none;
   font-weight: bold;
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.25rem;
+}
+
+th, td {
+  padding: .75rem;
+  border: 1px solid #DBE2EA;
+  text-align: left;
+}
+
+th {
+  background-color: #1D3557;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #F8FAFC;
+}
+
+h2 {
+  margin-top: 1.875rem;
+  color: #1D3557;
+}

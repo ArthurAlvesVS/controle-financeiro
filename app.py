@@ -11,7 +11,8 @@ db.init_app(app)
 
 @app.route("/")
 def home():
-  return render_template("index.html")
+  transactions = Transaction.query.all()
+  return render_template("index.html", transactions=transactions)
 
 @app.route("/add", methods=["GET", "POST"])
 def add_transaction():
