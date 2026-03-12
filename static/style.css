@@ -159,15 +159,21 @@ h2 {
 }
 
 .edit-btn {
-    background-color: #457b9d;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: .875px;
-    margin-right: 8px;
+  display: inline-block;
+  background-color: #457b9d;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  margin-right: 8px;
 }
 
 .edit-btn:hover {
     opacity: 0.85;
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 380px;
+  margin: 30px auto 0;
 }

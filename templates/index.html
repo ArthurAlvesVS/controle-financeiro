@@ -38,8 +38,8 @@
                 <td>{{ transaction.type.capitalize() }}</td>
                 <td>
                   <a href="{{ url_for('edit_transaction', id=transaction.id) }}" class="edit-btn">
-                    Editar
-                  </a> 
+                   Editar
+                  </a>                
                   <a href="{{ url_for('delete_transaction', id=transaction.id) }}" class="delete-btn">
                     Excluir
                   </a>
@@ -69,7 +69,38 @@
         <h3>Saldo</h3>
         <p>R$ {{ "%.2f"|format(saldo) }}</p>
       </div>
+
+    </div>
+    <h2>Visão Financeira</h2>
+    <div id="finance-data" data-receitas="{{ total_receitas }}" data-despesas="{{ total_despesas }}">
+    </div>
+    <div class="chart-container">
+      <canvas id="financeChart"></canvas>
     </div>
   </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const financeData = document.getElementById("finance-data");
+const receitas = Number(financeData.dataset.receitas);
+const despesas = Number(financeData.dataset.despesas);
+
+const ctx = document.getElementById("financeChart");
+
+new Chart(ctx, {
+    type: "doughnut",
+    data: {
+        labels: ["Receitas", "Despesas"],
+        datasets: [{
+            label: "Resumo Financeiro",
+            data: [receitas, despesas],
+            backgroundColor: ["#2a9d8f", "#e63946"]
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+</script>
 </body>
 </html>
