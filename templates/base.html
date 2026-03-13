@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="{{ url_for('home') }}" class="navbar-logo">
+                Controle Financeiro
+            </a>
+
+            <div class="navbar-links">
+                <a href="{{ url_for('home') }}">Dashboard</a>
+                <a href="{{ url_for('add_transaction') }}">Nova Transação</a>
+            </div>
+        </div>
+    </nav>
     <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -17,7 +29,7 @@
                 {% endfor %} 
             {% endif %}
         {% endwith %}
-        
+
         {% block content %}{% endblock %}
     </div>
 
