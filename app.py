@@ -1,6 +1,8 @@
 import csv
 import io
+from io import BytesIO
 from flask import Flask, render_template, request, redirect, url_for, flash, Response
+from openpyxl import Workbook
 from database import db
 from models import Transaction
 
@@ -153,6 +155,35 @@ def export_csv():
       csv_data,
       mimetype="text/csv",
       headers={"Content-Disposition": "attachment; filename=transacoes.csv"}
+   )
+
+@app.route("/export/excel")
+def export_excel():
+   transactions = Transaction.query.all()
+
+   workbook = Workbook()
+   sheet = workbook.active
+   sheet.title = "Transações"
+
+   sheet.append(["Descrição", "Valor", "Categoria", "Tipo", "Data"])
+
+   for transaction in transactions:
+      sheet.append([
+         transaction.description,
+         transaction.amount,
+         transaction.category,
+         transaction.type,
+         transaction.date
+      ])
+
+   output = BytesIO()
+   workbook.save(output)
+   output.seek(0)
+
+   return Response(
+      output.getvalue(),
+      mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      headers={"Content-Disposition": "attachment; filename=transacoes.xlsx"}
    )
 
 if __name__ == "__main__":
