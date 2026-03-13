@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+import csv
+import io
+from flask import Flask, render_template, request, redirect, url_for, flash, Response
 from database import db
 from models import Transaction
 
@@ -12,6 +14,8 @@ db.init_app(app)
 
 @app.route("/")
 def home():
+    sort = request.args.get("sort", "date")
+    order = request.args.get("order" , "desc")
     month = request.args.get("month")
     year = request.args.get("year")
 
@@ -48,7 +52,9 @@ def home():
          categorias=categorias,
          valores=valores,
          selected_month=month,
-         selected_year=year
+         selected_year=year,
+         selected_sort=sort,
+         selected_order=order
       )
 
 @app.route("/add", methods=["GET", "POST"])
@@ -104,6 +110,33 @@ def edit_transaction(id):
         return redirect(url_for("home"))
 
     return render_template("edit_transaction.html", transaction=transaction)
+
+@app.route("/export/csv")
+def export_csv():
+   transactions = Transaction.query.all()
+
+   output = io.StringIO()
+   writer = csv.writer(output)
+
+   writer.writerow(["Descrição", "Valor", "Categoria", "Tipo", "Data"])
+
+   for transaction in transactions:
+      writer.writerow([
+         transaction.description,
+         transaction.amount,
+         transaction.category,
+         transaction.type,
+         transaction.date
+      ])
+
+   csv_data = output.getvalue()
+   output.close()
+
+   return Response(
+      csv_data,
+      mimetype="text/csv",
+      headers={"Content-Disposition": "attachment; filename=transacoes.csv"}
+   )
 
 if __name__ == "__main__":
   with app.app_context():

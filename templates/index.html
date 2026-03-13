@@ -9,6 +9,8 @@
 
     <p>
         <a href="{{ url_for('add_transaction') }}">Adicionar nova transação</a>
+
+        <a href="{{ url_for('export_csv') }}">Exportar CSV</a>
     </p>
 
     <h2>Filtrar por Mês</h2>
@@ -36,6 +38,29 @@
 
         <button type="submit">Filtrar</button>
     </form>
+
+    <h2>Ordenar Transações</h2>
+
+    <form method="get" class="filter-form">
+        <input type="hidden" name="month" value="{{ selected_month or ''}}">
+        <input type="hidden" name="year" value="{{ selected_year or ''}}">
+
+        <label for="sort">Ordenar por:</label>
+        <select name="sort" id="sort">
+            <option value="date" {% if selected_sort == "date" %}selected{% endif %}>Data</option>
+            <option value="amount" {% if selected_sort == "amount" %}selected{% endif %}>Valor</option>
+            <option value="category" {% if selected_sort == "category" %}selected{% endif %}>Categoria</option>
+        </select>
+
+        <label for="order">Ordem:</label>
+        <select name="order" id="order">
+            <option value="desc" {% if selected_order == "desc" %}selected{% endif %}>Decrescente</option>
+            <option value="asc" {% if selected_order == "asc" %}selected{% endif %}>Crescente</option>
+        </select>
+
+        <button type="submit">Aplicar</button>
+    </form>
+
 
     <h2>Resumo Financeiro</h2>
 
