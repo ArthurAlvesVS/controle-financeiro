@@ -39,6 +39,20 @@
         <button type="submit">Filtrar</button>
     </form>
 
+    <h2>Buscar Transações</h2>
+
+    <form method="get" class="filter-form">
+        <input type="hidden" name="month" value="{{ select_month or '' }}">
+        <input type="hidden" name="year" value="{{ select_year or '' }}">
+        <input type="hidden" name="sort" value="{{ select_sort or 'date' }}">
+        <input type="hidden" name="order" value="{{ select_order or 'desc' }}">
+
+        <label for="search">Buscar:</label>
+        <input type="text" name="search" id="search" value="{{ search_term or '' }}" placeholder="Ex: mercado">
+
+        <button type="submit">Pesquisar</button>
+    </form>
+
     <h2>Ordenar Transações</h2>
 
     <form method="get" class="filter-form">

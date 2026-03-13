@@ -18,14 +18,30 @@ def home():
     order = request.args.get("order" , "desc")
     month = request.args.get("month")
     year = request.args.get("year")
+    search = request.args.get("search", "").strip().lower()
 
     transactions = Transaction.query.all()
 
     if month and year:
        transactions = [
           t for t in transactions
-          if t.date.statswith(f"{year}-{month}")
+          if t.date.startswith(f"{year}-{month}")
        ]
+
+    if search:
+       transactions = [
+          t for t in transactions
+          if search in t.description.lower() or search in t.category.lower()
+       ]
+
+    if sort == "date":
+       transactions = sorted(transactions, key=lambda t: t.date, reverse=(order == "desc"))
+
+    elif sort == "amount":
+       transactions = sorted(transactions, key=lambda t: t.amount, reverse=(order == "desc"))
+
+    elif sort == "category":
+       transactions = sorted(transactions, key=lambda t: t.category.lower(), reverse=(order == "desc"))
 
     total_receitas = sum(t.amount for t in transactions if t.type == "receita")
     total_despesas = sum(t.amount for t in transactions if t.type == "despesa")
@@ -43,7 +59,7 @@ def home():
     categorias = list(despesas_por_categoria.keys())
     valores = list(despesas_por_categoria.values())
     
-    return render_template(
+    return render_template (
          "index.html", 
          transactions=transactions,
          total_receitas=total_receitas,
@@ -54,7 +70,8 @@ def home():
          selected_month=month,
          selected_year=year,
          selected_sort=sort,
-         selected_order=order
+         selected_order=order,
+         search_term=search
       )
 
 @app.route("/add", methods=["GET", "POST"])
@@ -77,7 +94,7 @@ def add_transaction():
       db.session.add(new_transaction)
       db.session.commit()
 
-      flash("Transação atualizada com sucesso.", "success")
+      flash("Transação adicionada com sucesso.", "success")
 
       return redirect(url_for("home"))
    
