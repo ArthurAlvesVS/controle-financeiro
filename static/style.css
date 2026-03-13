@@ -208,3 +208,16 @@ h2 {
 .filter-form {
   padding: 10px 14px;
 }
+
+.flash-message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.flash-message.success {
+  background-color: #D8F3DC;
+  color: #1B4332;
+  border: 1px solid #95D5B2;
+}

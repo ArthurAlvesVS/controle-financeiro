@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from database import db
 from models import Transaction
 
@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///finance.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECRET_KEY"] = "minha_chave_secreta"
 
 db.init_app(app)
 
@@ -70,6 +71,8 @@ def add_transaction():
       db.session.add(new_transaction)
       db.session.commit()
 
+      flash("Transação atualizada com sucesso.", "success")
+
       return redirect(url_for("home"))
    
    return render_template("add_transaction.html")
@@ -80,6 +83,8 @@ def delete_transaction(id):
 
    db.session.delete(transaction)
    db.session.commit()
+
+   flash("Transação excluída com sucesso.", "success")
 
    return redirect(url_for("home"))
 
