@@ -9,8 +9,8 @@
 
     <div class="action-buttons">
         <a href="{{ url_for('add_transaction') }}" class="main-btn">Adicionar nova transação</a>
-        <a href="{{ url_for('export_csv') }}" class="secondary-btn">Exportar CSV</a>
-        <a href="{{ url_for('export_excel') }}" class="secondary-btn">Exportar Excel</a>
+        <a href="{{ url_for('export_csv', month=selected_month, year=selected_year, search=search_term, sort=selected_sort, order=selected_order) }}" class="secondary-btn">Exportar CSV</a>
+        <a href="{{ url_for('export_excel', month=selected_month, year=selected_year, search=search_term, sort=selected_sort, order=selected_order) }}" class="secondary-btn">Exportar Excel</a>
     </div>
 <div class="controls-card">
     <h2>Filtros</h2>

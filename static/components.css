@@ -5,7 +5,7 @@
     border-radius: 8px;
     text-decoration: none;
     font-weight: bold;
-    transition: 0.2s ease;
+    font-size: 1rem;
 }
 
 .main-btn {
@@ -18,10 +18,13 @@
     color: #1d3557;
 }
 
-.main-btn:hover,
+.main-btn:hover {
+    outline: 1px solid #3b5b89;
+    opacity: 0.9;
+}
+
 .secondary-btn:hover {
     opacity: 0.9;
-    transform: translateY(-1px);
 }
 
 .card {
@@ -47,12 +50,12 @@
 .card h3 {
     margin: 0;
     color: #e9ecef;
-    font-size: 20px;
+    font-size: 1.25rem;
     text-align: left;
 }
 
 .card p {
-    font-size: 22px;
+    font-size: 1.375rem;
     margin-top: 10px;
 }
 
@@ -73,7 +76,7 @@
     display: inline-block;
     padding: 6px 10px;
     border-radius: 999px;
-    font-size: 13px;
+    font-size: .8125rem;
     font-weight: bold;
 }
 

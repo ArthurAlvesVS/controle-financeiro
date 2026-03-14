@@ -14,10 +14,9 @@ app.config["SECRET_KEY"] = "minha_chave_secreta"
 
 db.init_app(app)
 
-@app.route("/")
-def home():
+def get_filtered_transactions():
     sort = request.args.get("sort", "date")
-    order = request.args.get("order" , "desc")
+    order = request.args.get("order", "desc")
     month = request.args.get("month")
     year = request.args.get("year")
     search = request.args.get("search", "").strip().lower()
@@ -25,25 +24,41 @@ def home():
     transactions = Transaction.query.all()
 
     if month and year:
-       transactions = [
-          t for t in transactions
-          if t.date.startswith(f"{year}-{month}")
-       ]
+        transactions = [
+            t for t in transactions
+            if t.date.startswith(f"{year}-{month}")
+        ]
 
     if search:
-       transactions = [
-          t for t in transactions
-          if search in t.description.lower() or search in t.category.lower()
-       ]
+        transactions = [
+            t for t in transactions
+            if search in t.description.lower() or search in t.category.lower()
+        ]
 
     if sort == "date":
-       transactions = sorted(transactions, key=lambda t: t.date, reverse=(order == "desc"))
-
+        transactions = sorted(
+            transactions,
+            key=lambda t: t.date,
+            reverse=(order == "desc")
+        )
     elif sort == "amount":
-       transactions = sorted(transactions, key=lambda t: t.amount, reverse=(order == "desc"))
-
+        transactions = sorted(
+            transactions,
+            key=lambda t: t.amount,
+            reverse=(order == "desc")
+        )
     elif sort == "category":
-       transactions = sorted(transactions, key=lambda t: t.category.lower(), reverse=(order == "desc"))
+        transactions = sorted(
+            transactions,
+            key=lambda t: t.category.lower(),
+            reverse=(order == "desc")
+        )
+
+    return transactions, sort, order, month, year, search
+
+@app.route("/")
+def home():
+    transactions, sort, order, month, year, search = get_filtered_transactions()
 
     total_receitas = sum(t.amount for t in transactions if t.type == "receita")
     total_despesas = sum(t.amount for t in transactions if t.type == "despesa")
@@ -52,29 +67,29 @@ def home():
     despesas_por_categoria = {}
 
     for t in transactions:
-         if t.type == "despesa":
+        if t.type == "despesa":
             if t.category in despesas_por_categoria:
-             despesas_por_categoria[t.category] += t.amount
+                despesas_por_categoria[t.category] += t.amount
             else:
-               despesas_por_categoria[t.category] = t.amount
-        
+                despesas_por_categoria[t.category] = t.amount
+
     categorias = list(despesas_por_categoria.keys())
     valores = list(despesas_por_categoria.values())
-    
-    return render_template (
-         "index.html", 
-         transactions=transactions,
-         total_receitas=total_receitas,
-         total_despesas=total_despesas,
-         saldo=saldo,
-         categorias=categorias,
-         valores=valores,
-         selected_month=month,
-         selected_year=year,
-         selected_sort=sort,
-         selected_order=order,
-         search_term=search
-      )
+
+    return render_template(
+        "index.html",
+        transactions=transactions,
+        total_receitas=total_receitas,
+        total_despesas=total_despesas,
+        saldo=saldo,
+        categorias=categorias,
+        valores=valores,
+        selected_month=month,
+        selected_year=year,
+        selected_sort=sort,
+        selected_order=order,
+        search_term=search
+    )
 
 @app.route("/add", methods=["GET", "POST"])
 def add_transaction():
@@ -132,7 +147,7 @@ def edit_transaction(id):
 
 @app.route("/export/csv")
 def export_csv():
-   transactions = Transaction.query.all()
+   transactions, _, _, _, _, _ = get_filtered_transactions()
 
    output = io.StringIO()
    writer = csv.writer(output)
@@ -159,7 +174,7 @@ def export_csv():
 
 @app.route("/export/excel")
 def export_excel():
-   transactions = Transaction.query.all()
+   transactions, _, _, _, _, _ = get_filtered_transactions()
 
    workbook = Workbook()
    sheet = workbook.active

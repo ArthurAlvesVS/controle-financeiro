@@ -45,4 +45,17 @@
     .filter-form button {
         width: 100%;
     }
+
+    .form-card {
+        padding: 18px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions button,
+    .form-actions .secondary-btn {
+        width: 100%;
+    }
 }

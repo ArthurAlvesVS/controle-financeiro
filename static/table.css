@@ -45,7 +45,7 @@ tbody tr:hover {
     padding: 8px 12px;
     border-radius: 6px;
     text-decoration: none;
-    font-size: 14px;
+    font-size: .875rem;
     font-weight: bold;
     color: white;
     margin-right: 8px;
