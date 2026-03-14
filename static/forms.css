@@ -1,0 +1,57 @@
+.controls-card {
+    background: white;
+    border: 1px solid #dbe2ea;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.controls-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 16px;
+}
+
+.controls-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    align-items: end;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    font-weight: bold;
+    color: #1d3557;
+}
+
+.control-group input,
+.control-group select {
+    padding: 10px 12px;
+    border: 1px solid #ccd5e0;
+    border-radius: 8px;
+    font-size: 15px;
+    width: 100%;
+}
+
+.control-button button {
+    width: 100%;
+    padding: 11px 16px;
+    background-color: #1d3557;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.control-button button:hover {
+    opacity: 0.9;
+}

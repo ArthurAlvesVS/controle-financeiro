@@ -1,0 +1,48 @@
+@media (max-width: 900px) {
+    .controls-row {
+        grid-template-columns: 1fr;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .navbar-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 94%;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .main-btn,
+    .secondary-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-form button {
+        width: 100%;
+    }
+}

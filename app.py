@@ -186,6 +186,10 @@ def export_excel():
       headers={"Content-Disposition": "attachment; filename=transacoes.xlsx"}
    )
 
+@app.template_filter("currency")
+def currency_format(value):
+    return "R$ " + "{:,.2f}".format(value).replace(",", "X").replace(".", ",").replace("X", ".")
+
 if __name__ == "__main__":
   with app.app_context():
       db.create_all()

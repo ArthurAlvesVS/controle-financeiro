@@ -7,99 +7,94 @@
     <p>Bem-vindo ao seu sistema de finanças.</p>
     <p>Aqui você poderá registrar entradas e saídas de dinheiro.</p>
 
-    <p>
-        <a href="{{ url_for('add_transaction') }}">Adicionar nova transação</a>
+    <div class="action-buttons">
+        <a href="{{ url_for('add_transaction') }}" class="main-btn">Adicionar nova transação</a>
+        <a href="{{ url_for('export_csv') }}" class="secondary-btn">Exportar CSV</a>
+        <a href="{{ url_for('export_excel') }}" class="secondary-btn">Exportar Excel</a>
+    </div>
+<div class="controls-card">
+    <h2>Filtros</h2>
 
-        <a href="{{ url_for('export_csv') }}">Exportar CSV</a>
+    <form method="GET" class="controls-form">
+        <div class="controls-row">
+            <div class="control-group">
+                <label for="search">Buscar</label>
+                <input type="text" name="search" id="search" value="{{ search_term or '' }}" placeholder="Ex: mercado">
+            </div>
+            <div class="control-group">
+                <label for="month">Mês</label>
+                <select name="month" id="month">
+                    <option value="">Todos</option>
+                    <option value="01" {% if selected_month == "01" %}selected{% endif %}>Janeiro</option>
+                    <option value="02" {% if selected_month == "02" %}selected{% endif %}>Fevereiro</option>
+                    <option value="03" {% if selected_month == "03" %}selected{% endif %}>Março</option>
+                    <option value="04" {% if selected_month == "04" %}selected{% endif %}>Abril</option>
+                    <option value="05" {% if selected_month == "05" %}selected{% endif %}>Maio</option>
+                    <option value="06" {% if selected_month == "06" %}selected{% endif %}>Junho</option>
+                    <option value="07" {% if selected_month == "07" %}selected{% endif %}>Julho</option>
+                    <option value="08" {% if selected_month == "08" %}selected{% endif %}>Agosto</option>
+                    <option value="09" {% if selected_month == "09" %}selected{% endif %}>Setembro</option>
+                    <option value="10" {% if selected_month == "10" %}selected{% endif %}>Outubro</option>
+                    <option value="11" {% if selected_month == "11" %}selected{% endif %}>Novembro</option>
+                    <option value="12" {% if selected_month == "12" %}selected{% endif %}>Dezembro</option>
+                </select>
+            </div>
 
-        <a href="{{ url_for('export_excel') }}">Exportar Excel</a>
-    </p>
+            <div class="control-group">
+                <label for="year">Ano</label>
+                <input type="text" name="year" id="year" value="{{ selected_year or '' }}" placeholder="2026">
+            </div>
 
-    <h2>Filtrar por Mês</h2>
+        </div>
 
-    <form method="GET" class="filter-form">
-        <label for="month">Mês:</label>
-        <select name="month" id="month">
-            <option value="">Todos</option>
-            <option value="01" {% if selected_month == "01" %}selected{% endif %}>Janeiro</option>
-            <option value="02" {% if selected_month == "02" %}selected{% endif %}>Fevereiro</option>
-            <option value="03" {% if selected_month == "03" %}selected{% endif %}>Março</option>
-            <option value="04" {% if selected_month == "04" %}selected{% endif %}>Abril</option>
-            <option value="05" {% if selected_month == "05" %}selected{% endif %}>Maio</option>
-            <option value="06" {% if selected_month == "06" %}selected{% endif %}>Junho</option>
-            <option value="07" {% if selected_month == "07" %}selected{% endif %}>Julho</option>
-            <option value="08" {% if selected_month == "08" %}selected{% endif %}>Agosto</option>
-            <option value="09" {% if selected_month == "09" %}selected{% endif %}>Setembro</option>
-            <option value="10" {% if selected_month == "10" %}selected{% endif %}>Outubro</option>
-            <option value="11" {% if selected_month == "11" %}selected{% endif %}>Novembro</option>
-            <option value="12" {% if selected_month == "12" %}selected{% endif %}>Dezembro</option>
-        </select>
+        <div class="controls-row">
+            <div class="control-group">
+                <label for="sort">Ordenar por</label>
+                <select name="sort" id="sort">
+                    <option value="date" {% if selected_sort == "date" %}selected{% endif %}>Data</option>
+                    <option value="amount" {% if selected_sort == "amount" %}selected{% endif %}>Valor</option>
+                    <option value="category" {% if selected_sort == "category" %}selected{% endif %}>Categoria</option>
+                </select>
+            </div>
 
-        <label for="year">Ano:</label>
-        <input type="text" name="year" id="year" value="{{ selected_year or '' }}" placeholder="2026">
+            <div class="control-group">
+                <label for="order">Ordem</label>
+                <select name="order" id="order">
+                    <option value="desc" {% if selected_order == "desc" %}selected{% endif %}>Decrescente</option>
+                    <option value="asc" {% if selected_order == "asc" %}selected{% endif %}>Crescente</option>
+                </select>
+            </div>
 
-        <button type="submit">Filtrar</button>
+            <div class="control-group control-button">
+                <label>&nbsp;</label>
+                <button type="submit">Aplicar</button>
+            </div>
+        </div>
     </form>
-
-    <h2>Buscar Transações</h2>
-
-    <form method="get" class="filter-form">
-        <input type="hidden" name="month" value="{{ select_month or '' }}">
-        <input type="hidden" name="year" value="{{ select_year or '' }}">
-        <input type="hidden" name="sort" value="{{ select_sort or 'date' }}">
-        <input type="hidden" name="order" value="{{ select_order or 'desc' }}">
-
-        <label for="search">Buscar:</label>
-        <input type="text" name="search" id="search" value="{{ search_term or '' }}" placeholder="Ex: mercado">
-
-        <button type="submit">Pesquisar</button>
-    </form>
-
-    <h2>Ordenar Transações</h2>
-
-    <form method="get" class="filter-form">
-        <input type="hidden" name="month" value="{{ selected_month or ''}}">
-        <input type="hidden" name="year" value="{{ selected_year or ''}}">
-
-        <label for="sort">Ordenar por:</label>
-        <select name="sort" id="sort">
-            <option value="date" {% if selected_sort == "date" %}selected{% endif %}>Data</option>
-            <option value="amount" {% if selected_sort == "amount" %}selected{% endif %}>Valor</option>
-            <option value="category" {% if selected_sort == "category" %}selected{% endif %}>Categoria</option>
-        </select>
-
-        <label for="order">Ordem:</label>
-        <select name="order" id="order">
-            <option value="desc" {% if selected_order == "desc" %}selected{% endif %}>Decrescente</option>
-            <option value="asc" {% if selected_order == "asc" %}selected{% endif %}>Crescente</option>
-        </select>
-
-        <button type="submit">Aplicar</button>
-    </form>
-
-
-    <h2>Resumo Financeiro</h2>
-
-    <div class="summary">
-        <div class="card receita">
+</div>
+        <h2>Resumo Financeiro</h2>
+        
+        <div class="dashboard-summary">
+            <div class="card receita">
             <h3>Receitas</h3>
-            <p>R$ {{ "%.2f"|format(total_receitas) }}</p>
+            <p>{{ total_receitas | currency }}</p>
         </div>
 
         <div class="card despesa">
             <h3>Despesas</h3>
-            <p>R$ {{ "%.2f"|format(total_despesas) }}</p>
+            <p>{{ total_despesas | currency }}</p>
         </div>
 
         <div class="card saldo">
             <h3>Saldo</h3>
-            <p>R$ {{ "%.2f"|format(saldo) }}</p>
+            <p>{{ saldo | currency }}</p>
         </div>
     </div>
 
     <h2>Histórico de Transações</h2>
 
     {% if transactions %}
+    <div class="table-section">
         <table>
             <thead>
                 <tr>
@@ -113,25 +108,31 @@
             </thead>
             <tbody>
                 {% for transaction in transactions %}
-                    <tr>
-                        <td>{{ transaction.description }}</td>
-                        <td>R$ {{ "%.2f"|format(transaction.amount) }}</td>
-                        <td>{{ transaction.category }}</td>
-                        <td>{{ transaction.type.capitalize() }}</td>
-                        <td>{{ transaction.date }}</td>
-                        <td class="actions">
-                            <a href="{{ url_for('edit_transaction', id=transaction.id) }}" class="edit-btn">Editar</a>
-                            <a href="{{ url_for('delete_transaction', id=transaction.id) }}" class="delete-btn" onclick="return confirm('Tem certeza que deseja excluir esta transação?')">Excluir</a>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>{{ transaction.description }}</td>
+                    <td>{{ transaction.amount | currency }}</td>
+                    <td>{{ transaction.category }}</td>
+                    <td>
+                        <span class="type-badge {{ transaction.type }}">
+                            {{ transaction.type.capitalize() }}
+                        </span>
+                    </td>
+                    <td>{{ transaction.date }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('edit_transaction', id=transaction.id) }}" class="edit-btn">Editar</a>
+                        <a href="{{ url_for('delete_transaction', id=transaction.id) }}" class="delete-btn" onclick="return confirm('Tem certeza que deseja excluir esta transação?')">Excluir</a>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
-    {% else %}
+    </div>
+        {% else %}
         <p>Nenhuma transação cadastrada ainda.</p>
-    {% endif %}
-
-    <h2>Visão Financeira</h2>
+        {% endif %}
+        
+<div class="charts-card">
+    <h2>Análises Visuais</h2>
 
     <div 
         id="finance-data"
@@ -139,21 +140,28 @@
         data-despesas="{{ total_despesas }}"
     ></div>
 
-    <div class="chart-container">
-        <canvas id="financeChart"></canvas>
-    </div>
-
-    <h2>Despesas por Categoria</h2>
-
     <div 
         id="category-data"
         data-categorias='{{ categorias | tojson }}'
         data-valores='{{ valores | tojson }}'
     ></div>
 
-    <div class="chart-container">
-        <canvas id="categoryChart"></canvas>
+    <div class="charts-grid">
+        <div class="chart-box">
+            <h3>Receitas x Despesas</h3>
+            <div class="chart-container">
+                <canvas id="financeChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-box">
+            <h3 class="expenses">Despesas por Categoria</h3>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
     </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -177,7 +185,21 @@
                 }]
             },
             options: {
-                responsive: true
+                responsive: true,
+                maintainAspectRataio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            boxHeight: 12,
+                            padding: 20,
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
+                }
             }
         });
 
@@ -205,7 +227,23 @@
                 }]
             },
             options: {
-                responsive: true
+                responsive: true,
+                maintainAspectRataio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            boxHeight: 12,
+                            padding: 20,
+                            font: {
+                                size: 16
+                            }
+                        
+                        }
+
+                    }
+                }
             }
         });
     </script>
