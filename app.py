@@ -28,7 +28,7 @@ def get_filtered_transactions():
     year = request.args.get("year")
     search = request.args.get("search", "").strip().lower()
 
-    transactions = Transaction.query.all()
+    transactions = Transaction.query.filter_by(user_id=session["user_id"]).all()
 
     if month and year:
         transactions = [
@@ -120,7 +120,8 @@ def add_transaction():
          amount=amount,
          category=category,
          type=transaction_type,
-         date=date
+         date=date,
+         user_id=session["user_id"]
       )
 
       db.session.add(new_transaction)
@@ -138,7 +139,7 @@ def delete_transaction(id):
    if auth_redirect:
        return auth_redirect
    
-   transaction = Transaction.query.get_or_404(id)
+   transaction = Transaction.query.filter_by(id=id, user_id=session["user_id"]).first_or_404()
 
    db.session.delete(transaction)
    db.session.commit()
@@ -152,7 +153,7 @@ def edit_transaction(id):
     auth_redirect = login_required()
     if auth_redirect:
         return auth_redirect
-    transaction = Transaction.query.get_or_404(id)
+    transaction = Transaction.query.filter_by(id=id, user_id=session["user_id"]).first_or_404()
 
     if request.method == "POST":
         transaction.description = request.form["description"]
