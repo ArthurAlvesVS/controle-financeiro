@@ -14,8 +14,14 @@
             </a>
 
             <div class="navbar-links">
-                <a href="{{ url_for('home') }}">Dashboard</a>
-                <a href="{{ url_for('add_transaction') }}">Nova Transação</a>
+                {% if session.get("user_id") %}
+                    <a href="{{ url_for('home') }}">Dashboard</a>
+                    <a href="{{ url_for('add_transaction') }}">Nova Transação</a>
+                    <a href="{{ url_for('logout') }}">Sair</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Login</a>
+                    <a href="{{ url_for('register') }}">Cadastro</a>
+                {% endif %}
             </div>
         </div>
     </nav>

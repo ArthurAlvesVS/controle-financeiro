@@ -1,10 +1,11 @@
 import csv
 import io
 from io import BytesIO
-from flask import Flask, render_template, request, redirect, url_for, flash, Response
+from flask import Flask, render_template, request, redirect, url_for, flash, Response,session
+from werkzeug.security import generate_password_hash, check_password_hash
 from openpyxl import Workbook
 from database import db
-from models import Transaction
+from models import Transaction, User
 
 app = Flask(__name__)
 
@@ -14,6 +15,12 @@ app.config["SECRET_KEY"] = "minha_chave_secreta"
 
 db.init_app(app)
 
+def login_required():
+    if "user_id" not in session:
+        flash("Faça login para acessar o sistema.", "error")
+        return redirect(url_for("login"))
+    return None
+ 
 def get_filtered_transactions():
     sort = request.args.get("sort", "date")
     order = request.args.get("order", "desc")
@@ -58,6 +65,10 @@ def get_filtered_transactions():
 
 @app.route("/")
 def home():
+    auth_redirect = login_required()
+    if auth_redirect:
+        return auth_redirect
+    
     transactions, sort, order, month, year, search = get_filtered_transactions()
 
     total_receitas = sum(t.amount for t in transactions if t.type == "receita")
@@ -93,6 +104,10 @@ def home():
 
 @app.route("/add", methods=["GET", "POST"])
 def add_transaction():
+   auth_redirect = login_required()
+   if auth_redirect:
+       return auth_redirect
+   
    if request.method == "POST":
       description = request.form["description"]
       amount = float(request.form["amount"])
@@ -119,6 +134,10 @@ def add_transaction():
 
 @app.route("/delete/<int:id>")
 def delete_transaction(id):
+   auth_redirect = login_required()
+   if auth_redirect:
+       return auth_redirect
+   
    transaction = Transaction.query.get_or_404(id)
 
    db.session.delete(transaction)
@@ -130,6 +149,9 @@ def delete_transaction(id):
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit_transaction(id):
+    auth_redirect = login_required()
+    if auth_redirect:
+        return auth_redirect
     transaction = Transaction.query.get_or_404(id)
 
     if request.method == "POST":
@@ -147,6 +169,10 @@ def edit_transaction(id):
 
 @app.route("/export/csv")
 def export_csv():
+   auth_redirect = login_required()
+   if auth_redirect:
+    return auth_redirect
+   
    transactions, _, _, _, _, _ = get_filtered_transactions()
 
    output = io.StringIO()
@@ -174,6 +200,10 @@ def export_csv():
 
 @app.route("/export/excel")
 def export_excel():
+   auth_redirect = login_required()
+   if auth_redirect:
+       return auth_redirect
+   
    transactions, _, _, _, _, _ = get_filtered_transactions()
 
    workbook = Workbook()
@@ -204,6 +234,76 @@ def export_excel():
 @app.template_filter("currency")
 def currency_format(value):
     return "R$ " + "{:,.2f}".format(value).replace(",", "X").replace(".", ",").replace("X", ".")
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        print("POST DO REGISTER RECEBIDO")
+
+        name = request.form["name"]
+        email = request.form["email"].strip().lower()
+        password = request.form["password"]
+
+        existing_user = User.query.filter_by(email=email).first()
+
+        if existing_user:
+            print("Usuário já existe")
+            flash("Já existe um usuário com esse e-mail.", "error")
+            return redirect(url_for("register"))
+
+        password_hash = generate_password_hash(password)
+
+        new_user = User(
+            name=name,
+            email=email,
+            password_hash=password_hash
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        print("Usuário criado com sucesso")
+
+        flash("Cadastro realizado com sucesso. Faça login para continuar.", "success")
+        return redirect(url_for("login"))
+    
+    return render_template("register.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    print("ENTROU EM /login")
+    if request.method == "POST":
+
+        print("POST DO LOGIN RECEBIDO")
+        email = request.form["email"].strip().lower()
+        password = request.form["password"]
+
+        print("Tentando login com:", email)
+
+        user = User.query.filter_by(email=email).first()
+
+        print("Usuário encontrado?", user is not None)
+
+        if user and check_password_hash(user.password_hash, password):
+            session["user_id"] = user.id
+            session["user_name"] = user.name
+
+            print("LOGIN OK")
+
+            flash("Login realizado com sucesso.", "success")
+            return redirect(url_for("home"))
+        
+        print("LOGIN FALHOU")
+        flash("E-mail ou senha inválidos.", "error")
+        return redirect(url_for("login"))
+
+    return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("Você saiu da conta com sucesso.", "success")
+    return redirect(url_for("login"))
 
 if __name__ == "__main__":
   with app.app_context():

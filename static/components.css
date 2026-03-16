@@ -72,6 +72,12 @@
     border: 1px solid #95d5b2;
 }
 
+.flash-message.error {
+    background-color: #FFE5E5;
+    color: #b00020;
+    border: 1px solid #F5B5B5;
+}
+
 .type-badge {
     display: inline-block;
     padding: 6px 10px;
