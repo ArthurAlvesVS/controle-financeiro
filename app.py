@@ -16,6 +16,12 @@ app.config["SECRET_KEY"] = "minha_chave_secreta"
 
 db.init_app(app)
 
+def get_user_transactions_query():
+    return Transaction.query.filter_by(user_id=session["user_id"])
+
+def get_current_user_id():
+    return session.get("user_id")
+
 def get_filtered_transactions():
     sort = request.args.get("sort", "date")
     order = request.args.get("order", "desc")
@@ -23,7 +29,7 @@ def get_filtered_transactions():
     year = request.args.get("year")
     search = request.args.get("search", "").strip().lower()
 
-    transactions = Transaction.query.filter_by(user_id=session["user_id"]).all()
+    transactions = get_user_transactions_query().all()
 
     if month and year:
         transactions = [
@@ -157,6 +163,7 @@ def edit_transaction(id):
     return render_template("edit_transaction.html", transaction=transaction)
 
 @app.route("/export/csv")
+@login_required
 def export_csv():
 
    transactions, _, _, _, _, _ = get_filtered_transactions()
@@ -185,6 +192,7 @@ def export_csv():
    )
 
 @app.route("/export/excel")
+@login_required
 def export_excel():
    
    transactions, _, _, _, _, _ = get_filtered_transactions()
@@ -304,16 +312,17 @@ def profile():
         phone = request.form["phone"].strip()
 
         if not first_name or not last_name or not phone:
-            flash("Preecha todos os campos obrigatórios.", "error")
+            flash("Preencha todos os campos obrigatórios.", "error")
             return redirect(url_for("profile"))
         
         user.first_name = first_name
         user.last_name = last_name
+        user.phone = phone
         db.session.commit()
 
         session["user_name"] = user.full_name()
 
-        flash("Perfil atualizado com sucesso.", "sucess")
+        flash("Perfil atualizado com sucesso.", "success")
         return redirect(url_for("profile"))
 
     return render_template("profile.html", user=user)
