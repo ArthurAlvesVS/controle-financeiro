@@ -14,9 +14,14 @@ class Transaction(db.Model):
   
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  name = db.Column(db.String(100), nullable=False)
+  first_name = db.Column(db.String(100), nullable=False)
+  last_name = db.Column(db.String(100), nullable=False)
+  phone = db.Column(db.String(30), nullable=False)
   email = db.Column(db.String(120), unique=True, nullable=False)
   password_hash = db.Column(db.String(255), nullable=False)
+
+  def full_name(self):
+     return f"{self.first_name} {self.last_name}"
 
   def __repr__(self):
       return f"<User {self.email}>"

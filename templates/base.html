@@ -9,36 +9,45 @@
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="{{ url_for('home') }}" class="navbar-logo">
-                Controle Financeiro
+            <a href="{{ url_for('home') }}" class="brand">
+                <div class="brand-logo">F</div>
+                <div class="brand-text">
+                    <span class="brand-name">FluxaMoney</span>
+                </div>
             </a>
 
-            <div class="navbar-links">
-                {% if session.get("user_id") %}
+            {% if session.get("user_id") %}
+
+            <div class="user-menu">
+                <button class="user-trigger">
+                    <div class="user-avatar">
+                        {{ session.get("user_name")[0] }}
+                    </div>
+
+                    <span class="user-name">
+                        Olá, {{ session.get("user_name") }}
+                    </span>
+                    <span class="arrow">▾</span> 
+                </button>
+
+                <div class="dropdown">
+                    <a href="{{ url_for('profile') }}">Meu Perfil</a>
                     <a href="{{ url_for('home') }}">Dashboard</a>
-                    <a href="{{ url_for('add_transaction') }}">Nova Transação</a>
+                    <a href="{{ url_for('add_transaction') }}">Nova transação</a>
                     <a href="{{ url_for('logout') }}">Sair</a>
-                {% else %}
-                    <a href="{{ url_for('login') }}">Login</a>
-                    <a href="{{ url_for('register') }}">Cadastro</a>
-                {% endif %}
+                </div>
             </div>
+            {% else %}
+            <div class="auth-links">
+                <a href="{{ url_for('login') }}">Entrar</a>
+                <a href="{{ url_for('register') }}" class="btn-primary">Criar conta</a>
+            </div>
+            {% endif %}
         </div>
     </nav>
-    <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-message {{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %} 
-            {% endif %}
-        {% endwith %}
 
+    <div class="container">
         {% block content %}{% endblock %}
     </div>
-
-    {% block scripts %}{% endblock %}
 </body>
 </html>

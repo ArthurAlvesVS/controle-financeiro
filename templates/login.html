@@ -1,28 +1,87 @@
 {% extends "base.html" %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Entrar | FluxaMoney{% endblock %}
 
 {% block content %}
-<div class="form-page">
-  <div class="form-card">
-    <h1>Entrar</h1>
+<div class="auth-page">
+    <section class="auth-panel">
+        <div class="auth-brand">
+            <div class="auth-brand-logo">F</div>
+            <div class="auth-brand-name">FluxaMoney</div>
+        </div>
 
-    <form method="post" class="transaction form">
-      <div class="form-group">
-        <label for="email">E-mail</label>
-        <input type="email" id="email" name="email" required>
-      </div>
+        <div class="auth-hero">
+            <h1>Seu dinheiro, mais claro e mais organizado.</h1>
+            <p>
+                Entre na sua conta para acompanhar receitas, despesas, gráficos e exportações
+                em um painel financeiro pessoal moderno.
+            </p>
 
-      <div class="form-group">
-        <label for="password">Senha</label>
-        <input type="password" id="password" name="password" required>
-      </div>
+            <div class="auth-points">
+                <div class="auth-point">
+                    <strong>Controle total</strong>
+                    <span>Organize transações, categorias e histórico em um só lugar.</span>
+                </div>
 
-      <div class="form-actions">
-        <button type="submit" class="main-btn">Entrar</button>
-        <a href="{{ url_for('register') }}" class="secondary-btn">Criar conta</a>
-      </div>
-    </form>
-  </div>
+                <div class="auth-point">
+                    <strong>Visão inteligente</strong>
+                    <span>Entenda rapidamente para onde seu dinheiro está indo.</span>
+                </div>
+            </div>
+
+            <div class="auth-illustration">
+                <div class="auth-mini-dashboard">
+                    <div class="auth-mini-card">
+                        <span>Receitas</span>
+                        <strong>R$ 4.320</strong>
+                    </div>
+                    <div class="auth-mini-card">
+                        <span>Despesas</span>
+                        <strong>R$ 1.820</strong>
+                    </div>
+                    <div class="auth-mini-card">
+                        <span>Saldo</span>
+                        <strong>R$ 2.500</strong>
+                    </div>
+                </div>
+
+                <div class="auth-chart-bars">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="auth-form-wrap">
+        <div class="auth-card">
+            <h2>Entrar</h2>
+            <p class="auth-subtitle">Acesse sua conta para continuar no FluxaMoney.</p>
+
+            <form method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="auth-actions">
+                    <button type="submit" class="auth-submit">Entrar</button>
+
+                    <div class="auth-switch">
+                        Ainda não tem conta?
+                        <a href="{{ url_for('register') }}">Criar conta</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
 </div>
 {% endblock %}

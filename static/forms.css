@@ -119,3 +119,10 @@
     min-width: 160px;
     text-align: center;
 }
+
+.profile-info {
+    background: #F8FAFC;
+    border: 1px solid #DBE2EA;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+}

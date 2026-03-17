@@ -241,7 +241,9 @@ def register():
     if request.method == "POST":
         print("POST DO REGISTER RECEBIDO")
 
-        name = request.form["name"]
+        first_name = request.form["first_name"].strip()
+        last_name = request.form["last_name"].strip()
+        phone = request.form["phone"].strip()
         email = request.form["email"].strip().lower()
         password = request.form["password"]
 
@@ -255,7 +257,9 @@ def register():
         password_hash = generate_password_hash(password)
 
         new_user = User(
-            name=name,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
             email=email,
             password_hash=password_hash
         )
@@ -287,7 +291,7 @@ def login():
 
         if user and check_password_hash(user.password_hash, password):
             session["user_id"] = user.id
-            session["user_name"] = user.name
+            session["user_name"] = user.full_name()
 
             print("LOGIN OK")
 
@@ -305,6 +309,34 @@ def logout():
     session.clear()
     flash("Você saiu da conta com sucesso.", "success")
     return redirect(url_for("login"))
+
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    auth_redirect = login_required()
+    if auth_redirect:
+        return auth_redirect
+    
+    user = User.query.get_or_404(session["user_id"])
+
+    if request.method == "POST":
+        first_name = request.form["first_name"].strip()
+        last_name = request.form["last_name"].strip()
+        phone = request.form["phone"].strip()
+
+        if not first_name or not last_name or not phone:
+            flash("Preecha todos os campos obrigatórios.", "error")
+            return redirect(url_for("profile"))
+        
+        user.first_name = first_name
+        user.last_name = last_name
+        db.session.commit()
+
+        session["user_name"] = user.full_name()
+
+        flash("Perfil atualizado com sucesso.", "sucess")
+        return redirect(url_for("profile"))
+
+    return render_template("profile.html", user=user)
 
 if __name__ == "__main__":
   with app.app_context():

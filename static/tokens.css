@@ -1,0 +1,19 @@
+:root {
+  --color-primary: #1D3557;
+  --color-secondary: #457B9D;
+
+  --color-sucess: #2A9D8F;
+  --color-danger: #E63946;
+
+  --color-bg: #F4F7FB;
+  --color-card: #FFFFFF;
+
+  --color-border: #DBE2EA;
+
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --shadow-card: 0 6px 18px rgba(0,0,0,0.06);
+
+  --container-width: 1280px;
+}

@@ -1,33 +1,106 @@
 {% extends "base.html" %}
 
-{% block title %}Cadastro{% endblock %}
+{% block title %}Criar conta | FluxaMoney{% endblock %}
 
 {% block content %}
-<div class="form-page">
-    <div class="form-card">
-        <h1>Criar Conta</h1>
+<div class="auth-page">
+    <section class="auth-panel">
+        <div class="auth-brand">
+            <div class="auth-brand-logo">F</div>
+            <div class="auth-brand-name">FluxaMoney</div>
+        </div>
+        
+        <div class="auth-hero">
+            <h1>Comece a organizar sua vida financeira com mais clareza.</h1>
+            <p>
+                Crie sua conta para acessar um painel pessoal com controle de receitas,
+                despesas, gráficos e exportações.
+            </p>
+            
+            <div class="auth-points">
+                <div class="auth-point">
+                    <strong>Histórico financeiro</strong>
+                    <span>Acompanhe o que entra, o que sai e o saldo do período.</span>
+                </div>
 
-        <form method="POST" class="transaction-form">
-            <div class="form-group">
-                <label for="name">Nome</label>
-                <input type="text" id="name" name="name" required>
+                <div class="auth-point">
+                    <strong>Dados protegidos</strong>
+                    <span>Cada usuário acessa apenas as próprias informações.</span>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" required>
-            </div>
+            <div class="auth-illustration">
+                <div class="auth-mini-dashboard">
+                    <div class="auth-mini-card">
+                        <span>Mês</span>
+                        <strong>Março</strong>
+                    </div>
+                    <div class="auth-mini-card">
+                        <span>Entradas</span>
+                        <strong>12</strong>
+                    </div>
+                    <div class="auth-mini-card">
+                        <span>Saídas</span>
+                        <strong>18</strong>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label for="password">Senha</label>
-                <input type="password" id="password" name="password" required>
+                <div class="auth-chart-bars">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <div class="form-actions">
-                <button type="submit" class="main-btn">Cadastrar</button>
-                <a href="{{ url_for('login') }}" class="secondary-btn">Ir para login</a>
-            </div>
-        </form>
-    </div>
+    <section class="auth-form-wrap">
+        <div class="auth-card">
+            <h2>Criar conta</h2>
+            <p class="auth-subtitle">Cadastre-se para começar a usar o FluxaMoney.</p>
+
+            <form method="POST" class="auth-form">
+                <div class="auth-grid">
+                    <div class="form-group">
+                        <label for="first_name">Nome</label>
+                        <input type="text" id="first_name" name="first_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last_name">Sobrenome</label>
+                        <input type="text" id="last_name" name="last_name" required>
+                    </div>
+                </div>
+
+                <div class="auth-grid">
+                    <div class="form-group">
+                        <label for="phone">Telefone</label>
+                        <input type="text" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="auth-actions">
+                    <button type="submit" class="auth-submit">Criar conta</button>
+
+                    <div class="auth-switch">
+                        Já tem conta?
+                        <a href="{{ url_for('login') }}">Entrar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
 </div>
 {% endblock %}

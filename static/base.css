@@ -3,20 +3,21 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f7fb;
     margin: 0;
-    padding: 0;
-    color: #1f2937;
+    font-family: Inter, Arial, sans-serif;
+    background: var(--color-bg);
+    color: #1F2933;
 }
 
 .container {
-    width: min(1100px, 92%);
-    margin: 0 auto 40px;
+   max-width: var(--container-width);
+   margin: auto;
+   padding: 24px;
 }
 
 h1, h2, h3 {
     color: #1d3557;
+    margin-top: 0;
 }
 
 p {
