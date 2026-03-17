@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from openpyxl import Workbook
 from database import db
 from models import Transaction, User
+from auth_utils import login_required
 
 app = Flask(__name__)
 
@@ -15,12 +16,6 @@ app.config["SECRET_KEY"] = "minha_chave_secreta"
 
 db.init_app(app)
 
-def login_required():
-    if "user_id" not in session:
-        flash("Faça login para acessar o sistema.", "error")
-        return redirect(url_for("login"))
-    return None
- 
 def get_filtered_transactions():
     sort = request.args.get("sort", "date")
     order = request.args.get("order", "desc")
@@ -64,10 +59,8 @@ def get_filtered_transactions():
     return transactions, sort, order, month, year, search
 
 @app.route("/")
+@login_required
 def home():
-    auth_redirect = login_required()
-    if auth_redirect:
-        return auth_redirect
     
     transactions, sort, order, month, year, search = get_filtered_transactions()
 
@@ -103,10 +96,8 @@ def home():
     )
 
 @app.route("/add", methods=["GET", "POST"])
+@login_required
 def add_transaction():
-   auth_redirect = login_required()
-   if auth_redirect:
-       return auth_redirect
    
    if request.method == "POST":
       description = request.form["description"]
@@ -134,10 +125,8 @@ def add_transaction():
    return render_template("add_transaction.html")
 
 @app.route("/delete/<int:id>")
+@login_required
 def delete_transaction(id):
-   auth_redirect = login_required()
-   if auth_redirect:
-       return auth_redirect
    
    transaction = Transaction.query.filter_by(id=id, user_id=session["user_id"]).first_or_404()
 
@@ -149,10 +138,9 @@ def delete_transaction(id):
    return redirect(url_for("home"))
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
+@login_required
 def edit_transaction(id):
-    auth_redirect = login_required()
-    if auth_redirect:
-        return auth_redirect
+
     transaction = Transaction.query.filter_by(id=id, user_id=session["user_id"]).first_or_404()
 
     if request.method == "POST":
@@ -170,10 +158,7 @@ def edit_transaction(id):
 
 @app.route("/export/csv")
 def export_csv():
-   auth_redirect = login_required()
-   if auth_redirect:
-    return auth_redirect
-   
+
    transactions, _, _, _, _, _ = get_filtered_transactions()
 
    output = io.StringIO()
@@ -201,9 +186,6 @@ def export_csv():
 
 @app.route("/export/excel")
 def export_excel():
-   auth_redirect = login_required()
-   if auth_redirect:
-       return auth_redirect
    
    transactions, _, _, _, _, _ = get_filtered_transactions()
 
@@ -311,10 +293,8 @@ def logout():
     return redirect(url_for("login"))
 
 @app.route("/profile", methods=["GET", "POST"])
+@login_required
 def profile():
-    auth_redirect = login_required()
-    if auth_redirect:
-        return auth_redirect
     
     user = User.query.get_or_404(session["user_id"])
 
