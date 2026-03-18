@@ -181,6 +181,20 @@
         <canvas id="monthlyChart"></canvas>
     </div>
 </div>
+
+<div class="insights-card">
+    <h2>Diagnóstico Financeiro</h2>
+
+    {% if insights %}
+        <div class="insights-list">
+            {% for insight in insights %}
+                <div class="insight-item">
+                    {{ insight }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block scripts %}

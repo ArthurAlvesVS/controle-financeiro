@@ -64,6 +64,40 @@ def get_filtered_transactions():
 
     return transactions, sort, order, month, year, search
 
+def generate_insights(transactions, total_receitas, total_despesas, saldo, despesas_por_categoria):
+    insights = []
+
+    if not transactions:
+        insights.append("Você ainda não possui transações cadastradas.")
+        return insights
+
+    if total_despesas > total_receitas:
+        insights.append("Suas despesas estão maiores que suas receitas.")
+    elif total_receitas > total_despesas:
+        insights.append("Suas receitas estão maiores que suas despesas.")
+    else:
+        insights.append("Suas receitas e despesas estão no mesmo valor.")
+
+    if saldo > 0:
+        insights.append("Seu saldo atual está positivo.")
+    elif saldo < 0:
+        insights.append("Seu saldo atual está negativo.")
+    else:
+        insights.append("Seu saldo atual está zerado.")
+
+    if despesas_por_categoria:
+        maior_categoria = max(despesas_por_categoria, key=despesas_por_categoria.get)
+        maior_valor = despesas_por_categoria[maior_categoria]
+        valor_formatado = "{:,.2f}".format(maior_valor).replace(",", "X").replace(".", ",").replace("X", ".")
+        insights.append(
+            f"Sua maior categoria de despesa é {maior_categoria}, com total de R$ {valor_formatado}."
+        )
+
+    total_transacoes = len(transactions)
+    insights.append(f"Você possui {total_transacoes} transações no período analisado.")
+
+    return insights
+
 @app.route("/")
 @login_required
 def home():
@@ -108,6 +142,14 @@ def home():
     receitas_mensais = [receitas_por_mes.get(mes, 0) for mes in todos_os_meses]
     despesas_mensais = [despesas_por_mes.get(mes, 0) for mes in todos_os_meses]
 
+    insights = generate_insights(
+        transactions,
+        total_receitas,
+        total_despesas,
+        saldo,
+        despesas_por_categoria
+    )
+
     return render_template(
         "index.html",
         transactions=transactions,
@@ -123,7 +165,8 @@ def home():
         search_term=search,
         meses=todos_os_meses,
         receitas_mensais=receitas_mensais,
-        despesas_mensais=despesas_mensais
+        despesas_mensais=despesas_mensais,
+        insights=insights
     )
 
 @app.route("/add", methods=["GET", "POST"])
