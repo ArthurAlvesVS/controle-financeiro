@@ -86,6 +86,28 @@ def home():
     categorias = list(despesas_por_categoria.keys())
     valores = list(despesas_por_categoria.values())
 
+    receitas_por_mes = {}
+    despesas_por_mes = {}
+
+    for t in transactions:
+        mes = t.date[:7]
+
+        if t.type == "receita":
+            if mes in receitas_por_mes:
+                receitas_por_mes[mes] += t.amount
+            else:
+                receitas_por_mes[mes] = t.amount
+        
+        elif t.type == "despesa":
+            if mes in despesas_por_mes:
+                despesas_por_mes[mes] += t.amount
+            else:
+                despesas_por_mes[mes] = t.amount
+
+    todos_os_meses = sorted(set(receitas_por_mes.keys()) | set(despesas_por_mes.keys()))
+    receitas_mensais = [receitas_por_mes.get(mes, 0) for mes in todos_os_meses]
+    despesas_mensais = [despesas_por_mes.get(mes, 0) for mes in todos_os_meses]
+
     return render_template(
         "index.html",
         transactions=transactions,
@@ -98,7 +120,10 @@ def home():
         selected_year=year,
         selected_sort=sort,
         selected_order=order,
-        search_term=search
+        search_term=search,
+        meses=todos_os_meses,
+        receitas_mensais=receitas_mensais,
+        despesas_mensais=despesas_mensais
     )
 
 @app.route("/add", methods=["GET", "POST"])
@@ -157,6 +182,8 @@ def edit_transaction(id):
         transaction.date = request.form["date"]
 
         db.session.commit()
+
+        flash("Transação atualizada com sucesso.", "success")
 
         return redirect(url_for("home"))
 
@@ -229,7 +256,6 @@ def currency_format(value):
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        print("POST DO REGISTER RECEBIDO")
 
         first_name = request.form["first_name"].strip()
         last_name = request.form["last_name"].strip()
@@ -240,7 +266,6 @@ def register():
         existing_user = User.query.filter_by(email=email).first()
 
         if existing_user:
-            print("Usuário já existe")
             flash("Já existe um usuário com esse e-mail.", "error")
             return redirect(url_for("register"))
 
@@ -257,8 +282,6 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        print("Usuário criado com sucesso")
-
         flash("Cadastro realizado com sucesso. Faça login para continuar.", "success")
         return redirect(url_for("login"))
     
@@ -266,29 +289,20 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    print("ENTROU EM /login")
     if request.method == "POST":
 
-        print("POST DO LOGIN RECEBIDO")
         email = request.form["email"].strip().lower()
         password = request.form["password"]
 
-        print("Tentando login com:", email)
-
         user = User.query.filter_by(email=email).first()
-
-        print("Usuário encontrado?", user is not None)
 
         if user and check_password_hash(user.password_hash, password):
             session["user_id"] = user.id
             session["user_name"] = user.full_name()
 
-            print("LOGIN OK")
-
             flash("Login realizado com sucesso.", "success")
             return redirect(url_for("home"))
         
-        print("LOGIN FALHOU")
         flash("E-mail ou senha inválidos.", "error")
         return redirect(url_for("login"))
 

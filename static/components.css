@@ -95,3 +95,54 @@
     background-color: #ffe5e5;
     color: #b00020;
 }
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.chart-container-square {
+    max-width: 320px;
+    aspect-ratio: 1 / 1;
+}
+
+.chart-container-wide {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 2.2 / 1;
+    min-height: 280px;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.wide-chart {
+    height: 320px;
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #1F2933;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+    flex-shrink: 0;
+}

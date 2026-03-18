@@ -149,17 +149,36 @@
     <div class="charts-grid">
         <div class="chart-box">
             <h3>Receitas x Despesas</h3>
-            <div class="chart-container">
+            <div class="chart-container chart-container-square">
                 <canvas id="financeChart"></canvas>
             </div>
+
+            <div id="finance-legend" class="chart-legend"></div>
         </div>
 
         <div class="chart-box">
             <h3 class="expenses">Despesas por Categoria</h3>
-            <div class="chart-container">
+            <div class="chart-container chart-container-square">
                 <canvas id="categoryChart"></canvas>
             </div>
+
+            <div id="category-legend" class="chart-legend"></div>
         </div>
+    </div>
+</div>
+
+<div class="charts-card">
+    <h2>Evolução Mensal</h2>
+
+    <div 
+        id="monthly-data"
+        data-meses='{{ meses | tojson }}'
+        data-receitas='{{ receitas_mensais | tojson }}'
+        data-despesas='{{ despesas_mensais | tojson }}'
+    ></div>
+
+    <div class="chart-container chart-container-wide">
+        <canvas id="monthlyChart"></canvas>
     </div>
 </div>
 {% endblock %}
@@ -167,84 +186,159 @@
 {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
-        const financeData = document.getElementById("finance-data");
-        const receitas = Number(financeData.dataset.receitas);
-        const despesas = Number(financeData.dataset.despesas);
+<script>
 
-        const ctx = document.getElementById("financeChart");
+const colors = [
+    "#e63946",
+    "#f4a261",
+    "#2a9d8f",
+    "#457b9d",
+    "#e9c46a",
+    "#8d99ae",
+    "#6a4c93",
+    "#ff006e",
+    "#8338ec"
+];
 
-        new Chart(ctx, {
-            type: "doughnut",
-            data: {
-                labels: ["Receitas", "Despesas"],
-                datasets: [{
-                    label: "Resumo Financeiro",
-                    data: [receitas, despesas],
-                    backgroundColor: ["#2a9d8f", "#e63946"]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRataio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            boxWidth: 12,
-                            boxHeight: 12,
-                            padding: 20,
-                            font: {
-                                size: 16
-                            }
-                        }
-                    }
-                }
+const financeData = document.getElementById("finance-data");
+
+const receitas = Number(financeData.dataset.receitas);
+const despesas = Number(financeData.dataset.despesas);
+
+const financeCtx = document.getElementById("financeChart");
+
+new Chart(financeCtx, {
+    type: "doughnut",
+    data: {
+        labels: ["Receitas", "Despesas"],
+        datasets: [{
+            data: [receitas, despesas],
+            backgroundColor: ["#2a9d8f", "#e63946"]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
             }
-        });
+        }
+    }
+});
 
-        const categoryData = document.getElementById("category-data");
-        const categorias = JSON.parse(categoryData.dataset.categorias);
-        const valores = JSON.parse(categoryData.dataset.valores);
+const financeLegend = document.getElementById("finance-legend");
 
-        const ctx2 = document.getElementById("categoryChart");
+if (financeLegend) {
+    const financeLabels = ["Receitas", "Despesas"];
+    const financeColors = ["#2a9d8f", "#e63946"];
 
-        new Chart(ctx2, {
-            type: "pie",
-            data: {
-                labels: categorias,
-                datasets: [{
-                    label: "Despesas por Categoria",
-                    data: valores,
-                    backgroundColor: [
-                        "#e63946",
-                        "#f4a261",
-                        "#2a9d8f",
-                        "#457b9d",
-                        "#e9c46a",
-                        "#8d99ae"
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRataio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            boxWidth: 12,
-                            boxHeight: 12,
-                            padding: 20,
-                            font: {
-                                size: 16
-                            }
-                        
-                        }
+    financeLegend.innerHTML = "";
 
-                    }
-                }
+    financeLabels.forEach((label, index) => {
+        const item = document.createElement("div");
+        item.classList.add("legend-item");
+
+        const color = document.createElement("span");
+        color.classList.add("legend-color");
+        color.style.backgroundColor = financeColors[index];
+
+        const text = document.createElement("span");
+        text.textContent = label;
+
+        item.appendChild(color);
+        item.appendChild(text);
+
+        financeLegend.appendChild(item);
+    });
+}
+
+const categoryData = document.getElementById("category-data");
+
+const categorias = JSON.parse(categoryData.dataset.categorias);
+const valores = JSON.parse(categoryData.dataset.valores);
+
+const categoryCtx = document.getElementById("categoryChart");
+
+const categoryColors = categorias.map((_, i) => colors[i % colors.length]);
+
+new Chart(categoryCtx, {
+    type: "pie",
+    data: {
+        labels: categorias,
+        datasets: [{
+            data: valores,
+            backgroundColor: categoryColors
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
             }
-        });
-    </script>
+        }
+    }
+});
+
+const categoryLegend = document.getElementById("category-legend");
+
+if (categoryLegend) {
+    categoryLegend.innerHTML = "";
+
+    categorias.forEach((categoria, index) => {
+        const item = document.createElement("div");
+        item.classList.add("legend-item");
+
+        const color = document.createElement("span");
+        color.classList.add("legend-color");
+        color.style.backgroundColor = categoryColors[index];
+
+        const text = document.createElement("span");
+        text.textContent = categoria;
+
+        item.appendChild(color);
+        item.appendChild(text);
+
+        categoryLegend.appendChild(item);
+    });
+}
+
+const monthlyData = document.getElementById("monthly-data");
+
+const meses = JSON.parse(monthlyData.dataset.meses);
+const receitasMensais = JSON.parse(monthlyData.dataset.receitas);
+const despesasMensais = JSON.parse(monthlyData.dataset.despesas);
+
+const monthlyCtx = document.getElementById("monthlyChart");
+
+new Chart(monthlyCtx, {
+    type: "bar",
+    data: {
+        labels: meses,
+        datasets: [
+            {
+                label: "Receitas",
+                data: receitasMensais,
+                backgroundColor: "#2a9d8f"
+            },
+            {
+                label: "Despesas",
+                data: despesasMensais,
+                backgroundColor: "#e63946"
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: "bottom"
+            }
+        }
+    }
+});
+</script>
 {% endblock %}
