@@ -195,6 +195,22 @@
         </div>
     {% endif %}
 </div>
+
+<div class="insights-card">
+    <h2>Comparação com mês anterior</h2>
+
+    {% if comparacoes %}
+        <div class="insights-list">
+            {% for c in comparacoes %}
+                <div class="insight-item">
+                    {{ c }}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Sem dados suficientes para comparação.</p>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block scripts %}

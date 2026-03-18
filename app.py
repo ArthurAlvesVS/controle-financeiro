@@ -98,10 +98,68 @@ def generate_insights(transactions, total_receitas, total_despesas, saldo, despe
 
     return insights
 
+def compare_with_previous_month(transactions):
+    from datetime import datetime
+
+    if not transactions:
+        return []
+
+    comparacoes = []
+
+    hoje = datetime.today()
+    mes_atual = hoje.strftime("%Y-%m")
+    
+    if hoje.month == 1:
+        mes_anterior = f"{hoje.year - 1}-12"
+    else:
+        mes_anterior = f"{hoje.year}-{str(hoje.month - 1).zfill(2)}"
+
+    receitas_atual = 0
+    despesas_atual = 0
+    receitas_anterior = 0
+    despesas_anterior = 0
+
+    for t in transactions:
+        mes = t.date[:7]
+
+        if mes == mes_atual:
+            if t.type == "receita":
+                receitas_atual += t.amount
+            else:
+                despesas_atual += t.amount
+
+        elif mes == mes_anterior:
+            if t.type == "receita":
+                receitas_anterior += t.amount
+            else:
+                despesas_anterior += t.amount
+
+    def calcular_variacao(atual, anterior):
+        if anterior == 0:
+            return None
+        return ((atual - anterior) / anterior) * 100
+
+    variacao_receita = calcular_variacao(receitas_atual, receitas_anterior)
+    variacao_despesa = calcular_variacao(despesas_atual, despesas_anterior)
+
+    if variacao_receita is not None:
+        if variacao_receita > 0:
+            comparacoes.append(f"Sua receita aumentou {variacao_receita:.1f}% em relação ao mês anterior.")
+        elif variacao_receita < 0:
+            comparacoes.append(f"Sua receita diminuiu {abs(variacao_receita):.1f}% em relação ao mês anterior.")
+
+    if variacao_despesa is not None:
+        if variacao_despesa > 0:
+            comparacoes.append(f"Suas despesas aumentaram {variacao_despesa:.1f}% em relação ao mês anterior.")
+        elif variacao_despesa < 0:
+            comparacoes.append(f"Suas despesas diminuíram {abs(variacao_despesa):.1f}% em relação ao mês anterior.")
+
+    return comparacoes
+
 @app.route("/")
 @login_required
 def home():
-    
+
     transactions, sort, order, month, year, search = get_filtered_transactions()
 
     total_receitas = sum(t.amount for t in transactions if t.type == "receita")
@@ -150,6 +208,8 @@ def home():
         despesas_por_categoria
     )
 
+    comparacoes = compare_with_previous_month(transactions)
+
     return render_template(
         "index.html",
         transactions=transactions,
@@ -166,7 +226,8 @@ def home():
         meses=todos_os_meses,
         receitas_mensais=receitas_mensais,
         despesas_mensais=despesas_mensais,
-        insights=insights
+        insights=insights,
+        comparacoes=comparacoes
     )
 
 @app.route("/add", methods=["GET", "POST"])
