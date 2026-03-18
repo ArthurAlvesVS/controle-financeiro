@@ -156,6 +156,31 @@ def compare_with_previous_month(transactions):
 
     return comparacoes
 
+def generate_alerts(transactions, total_receitas, total_despesas, saldo, despesas_por_categoria):
+    alerts = []
+
+    if not transactions:
+        return alerts
+
+    if total_despesas > total_receitas:
+        alerts.append("Alerta: suas despesas estão maiores do que suas receitas.")
+
+    if saldo < 0:
+        alerts.append("Alerta: seu saldo está negativo.")
+
+    if total_despesas > 0 and despesas_por_categoria:
+        maior_categoria = max(despesas_por_categoria, key=despesas_por_categoria.get)
+        maior_valor = despesas_por_categoria[maior_categoria]
+        percentual = (maior_valor / total_despesas) * 100
+
+        if percentual >= 50:
+            alerts.append(
+                f"Atenção: {maior_categoria} representa {percentual:.1f}% das suas despesas totais."
+            )
+
+    return alerts
+
+
 @app.route("/")
 @login_required
 def home():
@@ -210,6 +235,14 @@ def home():
 
     comparacoes = compare_with_previous_month(transactions)
 
+    alerts = generate_alerts(
+        transactions,
+        total_receitas,
+        total_despesas,
+        saldo,
+        despesas_por_categoria
+    )
+
     return render_template(
         "index.html",
         transactions=transactions,
@@ -227,7 +260,8 @@ def home():
         receitas_mensais=receitas_mensais,
         despesas_mensais=despesas_mensais,
         insights=insights,
-        comparacoes=comparacoes
+        comparacoes=comparacoes,
+        alerts=alerts
     )
 
 @app.route("/add", methods=["GET", "POST"])

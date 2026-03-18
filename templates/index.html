@@ -211,6 +211,23 @@
         <p>Sem dados suficientes para comparação.</p>
     {% endif %}
 </div>
+
+<div class="alerts-card">
+    <h2>Alertas financeiros</h2>
+
+    {% if alerts %}
+        <div class="alerts-list">
+            {% for alert in alerts %}
+                <div class="alert-item">
+                    {{ alert }}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Nenhum alerta importante no momento.</p>
+    {% endif %}
+</div>
+
 {% endblock %}
 
 {% block scripts %}
