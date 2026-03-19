@@ -30,23 +30,19 @@
                     required
                 >
             </div>
-
-            <div class="form-group">
-                <label for="category">Categoria:</label>
-                <input 
-                    type="text" 
-                    id="category" 
-                    name="category" 
-                    value="{{ transaction.category }}" 
-                    required
-                >
-            </div>
-
+            
             <div class="form-group">
                 <label for="type">Tipo:</label>
                 <select id="type" name="type" required>
                     <option value="receita" {% if transaction.type == "receita" %}selected{% endif %}>Receita</option>
                     <option value="despesa" {% if transaction.type == "despesa" %}selected{% endif %}>Despesa</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Categoria:</label>
+                <select name="category" id="category" required>
+
                 </select>
             </div>
 
@@ -68,4 +64,61 @@
         </form>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+const categorias = {
+    receita: [
+        "Selecione uma categoria",
+        "Salário",
+        "Freelance",
+        "Investimentos",
+        "Vendas",
+        "Outros"
+    ],
+    despesa: [
+        "Selecione uma categoria",
+        "Alimentação",
+        "Transporte",
+        "Moradia",
+        "Saúde",
+        "Lazer",
+        "Educação",
+        "Assinaturas",
+        "Outros"
+    ]
+};
+
+const typeSelect = document.getElementById("type");
+const categorySelect = document.getElementById("category");
+
+const categoriaAtual = "{{ transaction.category|escape }}";
+const tipoAtual = "{{ transaction.type|escape }}";
+
+function atualizarCategorias() {
+    const tipo = typeSelect.value;
+    const lista = categorias[tipo] || [];
+
+    categorySelect.innerHTML = "";
+
+    lista.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+
+        if (cat === categoriaAtual) {
+            option.selected = true;
+        }
+
+        categorySelect.appendChild(option);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    typeSelect.value = tipoAtual;
+    atualizarCategorias();
+});
+
+typeSelect.addEventListener("change", atualizarCategorias);
+</script>
 {% endblock %}
