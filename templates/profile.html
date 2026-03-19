@@ -29,6 +29,11 @@
                 <input type="text" id="phone" name="phone" value="{{ user.phone }}" required>
             </div>
 
+            <div class="form-group">
+                <label for="monthly_goal">Meta mensal de economia</label>
+                <input type="number" step="0.01" id="monthly_goal" name="monthly_goal" value="{{ user.monthly_goal or 0 }}">
+            </div>
+
             <div class="form-actions">
                 <button type="submit" class="main-btn">Salvar Alterações</button>
                 <a href="{{ url_for('home') }}" class="secondary-btn">Voltar</a>

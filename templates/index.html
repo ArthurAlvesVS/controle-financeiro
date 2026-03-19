@@ -195,7 +195,22 @@
         </div>
     {% endif %}
 </div>
+<div class="goal-card">
+    <h2>Meta mensal</h2>
 
+    {% if monthly_goal > 0 %}
+        <p>Meta de economia: <strong>{{ monthly_goal | currency }}</strong></p>
+        <p>Valor acumulado no período: <strong>{{ valor_guardado | currency }}</strong></p>
+
+        <div class="goal-progress">
+            <div class="goal-progress-bar" data-progress="{{ progresso_meta }}"></div>
+        </div>
+
+        <p>{{ "%.1f"|format(progresso_meta) }}% da meta atingida</p>
+    {% else %}
+        <p>Você ainda não definiu uma meta mensal no seu perfil.</p>
+    {% endif %}
+</div>
 <div class="insights-card">
     <h2>Comparação com mês anterior</h2>
 
@@ -387,5 +402,13 @@ new Chart(monthlyCtx, {
         }
     }
 });
+</script>
+<script>
+const goalBar = document.querySelector(".goal-progress-bar");
+
+if (goalBar) {
+    const progress = Number(goalBar.dataset.progress) || 0;
+    goalBar.style.width = `${progress}%`;
+}
 </script>
 {% endblock %}

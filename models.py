@@ -19,6 +19,7 @@ class User(db.Model):
   phone = db.Column(db.String(30), nullable=False)
   email = db.Column(db.String(120), unique=True, nullable=False)
   password_hash = db.Column(db.String(255), nullable=False)
+  monthly_goal = db.Column(db.Float, default=0)
 
   def full_name(self):
      return f"{self.first_name} {self.last_name}"

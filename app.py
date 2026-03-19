@@ -184,7 +184,6 @@ def generate_alerts(transactions, total_receitas, total_despesas, saldo, despesa
 @app.route("/")
 @login_required
 def home():
-
     transactions, sort, order, month, year, search = get_filtered_transactions()
 
     total_receitas = sum(t.amount for t in transactions if t.type == "receita")
@@ -202,6 +201,24 @@ def home():
 
     categorias = list(despesas_por_categoria.keys())
     valores = list(despesas_por_categoria.values())
+
+    insights = generate_insights(
+        transactions,
+        total_receitas,
+        total_despesas,
+        saldo,
+        despesas_por_categoria
+    )
+
+    comparacoes = compare_with_previous_month(transactions)
+
+    alerts = generate_alerts(
+        transactions,
+        total_receitas,
+        total_despesas,
+        saldo,
+        despesas_por_categoria
+    )
 
     receitas_por_mes = {}
     despesas_por_mes = {}
@@ -225,23 +242,15 @@ def home():
     receitas_mensais = [receitas_por_mes.get(mes, 0) for mes in todos_os_meses]
     despesas_mensais = [despesas_por_mes.get(mes, 0) for mes in todos_os_meses]
 
-    insights = generate_insights(
-        transactions,
-        total_receitas,
-        total_despesas,
-        saldo,
-        despesas_por_categoria
-    )
+    user = User.query.get_or_404(session["user_id"])
+    monthly_goal = user.monthly_goal or 0
 
-    comparacoes = compare_with_previous_month(transactions)
+    valor_guardado = saldo
 
-    alerts = generate_alerts(
-        transactions,
-        total_receitas,
-        total_despesas,
-        saldo,
-        despesas_por_categoria
-    )
+    if monthly_goal > 0 and valor_guardado > 0:
+        progresso_meta = min((valor_guardado / monthly_goal) * 100, 100)
+    else:
+        progresso_meta = 0
 
     return render_template(
         "index.html",
@@ -261,7 +270,10 @@ def home():
         despesas_mensais=despesas_mensais,
         insights=insights,
         comparacoes=comparacoes,
-        alerts=alerts
+        alerts=alerts,
+        monthly_goal=monthly_goal,
+        valor_guardado=valor_guardado,
+        progresso_meta=progresso_meta
     )
 
 @app.route("/add", methods=["GET", "POST"])
@@ -454,14 +466,14 @@ def logout():
 
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
-def profile():
-    
+def profile():    
     user = User.query.get_or_404(session["user_id"])
 
     if request.method == "POST":
         first_name = request.form["first_name"].strip()
         last_name = request.form["last_name"].strip()
         phone = request.form["phone"].strip()
+        monthly_goal = float(request.form["monthly_goal"] or 0)
 
         if not first_name or not last_name or not phone:
             flash("Preencha todos os campos obrigatórios.", "error")
@@ -470,6 +482,7 @@ def profile():
         user.first_name = first_name
         user.last_name = last_name
         user.phone = phone
+        user.monthly_goal = monthly_goal
         db.session.commit()
 
         session["user_name"] = user.full_name()
@@ -482,4 +495,6 @@ def profile():
 if __name__ == "__main__":
   with app.app_context():
       db.create_all()
+
+  print(app.url_map)
   app.run(debug=True)
