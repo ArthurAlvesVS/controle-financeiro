@@ -213,11 +213,19 @@
             </div>
             
             <p>{{ "%.1f"|format(progresso_meta) }}% da meta atingida</p>
+            
+            {% if projection %}
+            <div class="projection-box">
+                {{ projection }}
+            </div>
+            {% endif %}
+
             {% else %}
             <p>Você ainda não definiu uma meta mensal no seu perfil.</p>
             {% endif %}
         </div>
     </div>
+
 
     <div class="financial-bottom-right">
         <div class="analysis-card">

@@ -180,6 +180,32 @@ def generate_alerts(transactions, total_receitas, total_despesas, saldo, despesa
 
     return alerts
 
+def generate_projection(transactions, saldo, monthly_goal):
+    from datetime import datetime
+    import calendar
+
+    if not transactions or monthly_goal <= 0:
+        return None
+
+    hoje = datetime.today()
+    dias_passados = hoje.day
+    dias_no_mes = calendar.monthrange(hoje.year, hoje.month)[1]
+
+    if dias_passados <= 0:
+        return None
+
+    media_diaria = saldo / dias_passados
+    projecao_final = media_diaria * dias_no_mes
+
+    valor_projetado = "{:,.2f}".format(projecao_final).replace(",", "X").replace(".", ",").replace("X", ".")
+
+    if saldo >= monthly_goal:
+        return f"Você já atingiu sua meta mensal. Mantendo esse ritmo, pode encerrar o mês com aproximadamente R$ {valor_projetado}."
+
+    if projecao_final >= monthly_goal:
+        return f"Mantendo esse ritmo, você deve atingir sua meta mensal e pode encerrar o mês com aproximadamente R$ {valor_projetado}."
+
+    return f"Mantendo esse ritmo, você pode não atingir sua meta. Projeção atual para o fim do mês: R$ {valor_projetado}."
 
 @app.route("/")
 @login_required
@@ -238,12 +264,19 @@ def home():
             else:
                 despesas_por_mes[mes] = t.amount
 
+
     todos_os_meses = sorted(set(receitas_por_mes.keys()) | set(despesas_por_mes.keys()))
     receitas_mensais = [receitas_por_mes.get(mes, 0) for mes in todos_os_meses]
     despesas_mensais = [despesas_por_mes.get(mes, 0) for mes in todos_os_meses]
 
     user = User.query.get_or_404(session["user_id"])
     monthly_goal = user.monthly_goal or 0
+
+    projection = generate_projection(
+    transactions,
+    saldo,
+    monthly_goal
+)
 
     valor_guardado = saldo
 
@@ -273,7 +306,8 @@ def home():
         alerts=alerts,
         monthly_goal=monthly_goal,
         valor_guardado=valor_guardado,
-        progresso_meta=progresso_meta
+        progresso_meta=progresso_meta,
+        projection=projection
     )
 
 @app.route("/add", methods=["GET", "POST"])

@@ -240,3 +240,14 @@
     padding-bottom: 10px;
     color: #64748b;
 }
+
+.projection-box {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: #eef6f3;
+    border-left: 4px solid #2a9d8f;
+    border-radius: 10px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #1f2933;
+}
