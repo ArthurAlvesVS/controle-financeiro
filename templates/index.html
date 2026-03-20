@@ -182,67 +182,80 @@
     </div>
 </div>
 
-<div class="insights-card">
-    <h2>Diagnóstico Financeiro</h2>
-
-    {% if insights %}
-        <div class="insights-list">
-            {% for insight in insights %}
+<div class="financial-dashboard-layout">
+    <div class="financial-top">
+        <div class="insights-card">
+            <h2>Diagnóstico Financeiro</h2>
+            
+            {% if insights %}
+            <div class="insights-list">
+                {% for insight in insights %}
                 <div class="insight-item">
                     {{ insight }}
                 </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
-    {% endif %}
-</div>
-<div class="goal-card">
-    <h2>Meta mensal</h2>
+    </div>
 
-    {% if monthly_goal > 0 %}
-        <p>Meta de economia: <strong>{{ monthly_goal | currency }}</strong></p>
-        <p>Valor acumulado no período: <strong>{{ valor_guardado | currency }}</strong></p>
-
-        <div class="goal-progress">
-            <div class="goal-progress-bar" data-progress="{{ progresso_meta }}"></div>
+    <div class="financial-bottom">
+    <div class="financial-bottom-left">
+        <div class="goal-card">
+            <h2>Meta mensal</h2>
+            
+            {% if monthly_goal > 0 %}
+            <p>Meta de economia: <strong>{{ monthly_goal | currency }}</strong></p>
+            <p>Valor acumulado no período: <strong>{{ valor_guardado | currency }}</strong></p>
+            
+            <div class="goal-progress">
+                <div class="goal-progress-bar" data-progress="{{ progresso_meta }}"></div>
+            </div>
+            
+            <p>{{ "%.1f"|format(progresso_meta) }}% da meta atingida</p>
+            {% else %}
+            <p>Você ainda não definiu uma meta mensal no seu perfil.</p>
+            {% endif %}
         </div>
+    </div>
 
-        <p>{{ "%.1f"|format(progresso_meta) }}% da meta atingida</p>
-    {% else %}
-        <p>Você ainda não definiu uma meta mensal no seu perfil.</p>
-    {% endif %}
-</div>
-<div class="insights-card">
-    <h2>Comparação com mês anterior</h2>
+    <div class="financial-bottom-right">
+        <div class="analysis-card">
 
-    {% if comparacoes %}
-        <div class="insights-list">
-            {% for c in comparacoes %}
-                <div class="insight-item">
-                    {{ c }}
+            <div class="analysis-section">
+                <h2>Comparação com mês anterior</h2>
+
+                {% if comparacoes %}
+                <div class="insights-list">
+                    {% for c in comparacoes %}
+                    <div class="insight-item">
+                        {{ c }}
+                    </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>Sem dados suficientes para comparação.</p>
-    {% endif %}
-</div>
+                {% else %}
+                <p class="analysis-empty">Sem dados suficientes para comparação.</p>
+                {% endif %}
+            </div>
 
-<div class="alerts-card">
-    <h2>Alertas financeiros</h2>
+            <div class="analysis-section">
+                <h2>Alertas financeiros</h2>
 
-    {% if alerts %}
-        <div class="alerts-list">
-            {% for alert in alerts %}
-                <div class="alert-item">
-                    {{ alert }}
+                {% if alerts %}
+                <div class="alerts-list">
+                    {% for alert in alerts %}
+                    <div class="alert-item">
+                        {{ alert }}
+                    </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+                {% else %}
+                <p class="analysis-empty">Nenhum alerta importante no momento.</p>
+                {% endif %}
+            </div>
         </div>
-    {% else %}
-        <p>Nenhum alerta importante no momento.</p>
-    {% endif %}
+    </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}

@@ -69,3 +69,31 @@
     width: 100% !important;
     height: 100% !important;
 }
+
+.financial-dashboard-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.financial-top {
+    width: 100%;
+}
+
+.financial-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.financial-bottom-left,
+.financial-bottom-right {
+    display: flex;
+}
+
+.financial-bottom-left > *,
+.financial-bottom-right > * {
+    width: 100%;
+}

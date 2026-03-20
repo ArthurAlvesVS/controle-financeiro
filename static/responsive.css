@@ -40,6 +40,10 @@
         width: 100%;
         max-width: 100%;
     }
+
+    .financial-bottom {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 600px) {
